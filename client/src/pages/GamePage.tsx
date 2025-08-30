@@ -86,19 +86,8 @@ const GamePage: React.FC = () => {
     );
   }
 
-  const currentPlayerData = game.players[game.currentPlayerIndex];
-
   return (
     <Box sx={{ p: 2 }}>
-      <Paper elevation={2} sx={{ p: 2, mb: 2 }}>
-        <Typography variant="h5" gutterBottom>
-          Splendor Game - Turn {Math.floor((game.players.length * 10 + game.currentPlayerIndex) / game.players.length)}
-        </Typography>
-        <Typography variant="h6" color="primary">
-          Current Player: {currentPlayerData?.name}
-        </Typography>
-      </Paper>
-
       <Grid container spacing={2}>
         <Grid item xs={12} lg={8}>
           <GameBoard
