@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { Box, Button, Typography, Chip, Alert } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Alert, Button, Chip } from '@mui/material';
 import { TokenBank as TokenBankType, GemType } from '../../../shared/types/game';
 
 interface TokenBankProps {
   tokens: TokenBankType;
+  selectedTokens: Partial<TokenBankType>;
+  onTokenSelectionChange: (tokens: Partial<TokenBankType>) => void;
 }
 
 const gemColors = {
@@ -15,8 +17,7 @@ const gemColors = {
   [GemType.GOLD]: '#ffcc00'
 };
 
-const TokenBank: React.FC<TokenBankProps> = ({ tokens }) => {
-  const [selectedTokens, setSelectedTokens] = useState<Partial<TokenBankType>>({});
+const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSelectionChange }) => {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const validateSelection = (newSelection: Partial<TokenBankType>): string => {
@@ -56,6 +57,12 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens }) => {
     return 'Invalid token selection.';
   };
 
+  // Validate selection whenever it changes
+  useEffect(() => {
+    const error = validateSelection(selectedTokens);
+    setErrorMessage(error);
+  }, [selectedTokens]);
+
   const handleTokenClick = (gem: keyof TokenBankType) => {
     const current = selectedTokens[gem] || 0;
     const available = tokens[gem];
@@ -71,9 +78,7 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens }) => {
       delete newSelection[gem];
     }
 
-    const error = validateSelection(newSelection);
-    setErrorMessage(error);
-    setSelectedTokens(newSelection);
+    onTokenSelectionChange(newSelection);
   };
 
   return (

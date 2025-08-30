@@ -1,47 +1,56 @@
 import React, { useState } from 'react';
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { Game } from '../../../shared/types/game';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
 
 interface GameActionsProps {
-  game: Game;
-  playerId: string;
-  onAction: (action: string, payload: any) => void;
+  selectedTokens: any;
+  onAction: (actionType: string, payload: any) => void;
 }
 
-const GameActions: React.FC<GameActionsProps> = ({ game, playerId, onAction }) => {
-  const [actionDialogOpen, setActionDialogOpen] = useState(false);
-  const [selectedAction, setSelectedAction] = useState<string>('');
+const GameActions: React.FC<GameActionsProps> = ({ selectedTokens, onAction }) => {
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    action: string;
+    payload: any;
+  }>({ open: false, action: '', payload: {} });
 
-  const handleAction = (actionType: string) => {
-    setSelectedAction(actionType);
-    setActionDialogOpen(true);
+  // Check if token selection is valid for taking
+  const canTakeTokens = () => {
+    const selectedGems = Object.entries(selectedTokens || {}).filter(([, count]) => count && (count as number) > 0);
+    return selectedGems.length > 0;
   };
 
-  const confirmAction = () => {
-    // This is a simplified version - in a real implementation,
-    // you'd have specific dialogs for each action type with proper forms
-    switch (selectedAction) {
+  const handleAction = (actionType: string, payload: any) => {
+    setConfirmDialog({
+      open: true,
+      action: actionType,
+      payload
+    });
+  };
+
+  const handleConfirm = () => {
+    onAction(confirmDialog.action, confirmDialog.payload);
+    setConfirmDialog({ open: false, action: '', payload: {} });
+  };
+
+  const handleCancel = () => {
+    setConfirmDialog({ open: false, action: '', payload: {} });
+  };
+
+  const getConfirmationMessage = () => {
+    switch (confirmDialog.action) {
       case 'take-tokens':
-        onAction('take-tokens', { playerId, tokens: { diamond: 1, sapphire: 1, emerald: 1 } });
-        break;
-      case 'purchase-card':
-        // Would show a card selection dialog
-        break;
-      case 'reserve-card':
-        // Would show a card selection dialog
-        break;
+        const selectedGems = Object.entries(selectedTokens || {})
+          .filter(([, count]) => count && (count as number) > 0)
+          .map(([gem, count]) => `${count} ${gem}`)
+          .join(', ');
+        return `Are you sure you want to take ${selectedGems}?`;
+      default:
+        return 'Are you sure you want to perform this action?';
     }
-    setActionDialogOpen(false);
   };
-
-  const isPlayerTurn = game.players[game.currentPlayerIndex]?.id === playerId;
-
-  if (!isPlayerTurn) {
-    return null;
-  }
 
   return (
-    <>
+    <Box>
       <Box
         sx={{
           position: 'fixed',
@@ -58,35 +67,28 @@ const GameActions: React.FC<GameActionsProps> = ({ game, playerId, onAction }) =
       >
         <Button
           variant="contained"
-          onClick={() => handleAction('take-tokens')}
+          onClick={() => handleAction('take-tokens', { tokens: selectedTokens })}
+          disabled={!canTakeTokens()}
+          sx={{
+            bgcolor: '#1976d2',
+            '&:hover': { bgcolor: '#1565c0' }
+          }}
         >
-          Take Tokens
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => handleAction('purchase-card')}
-        >
-          Purchase Card
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => handleAction('reserve-card')}
-        >
-          Reserve Card
+          TAKE TOKENS
         </Button>
       </Box>
 
-      <Dialog open={actionDialogOpen} onClose={() => setActionDialogOpen(false)}>
+      <Dialog open={confirmDialog.open} onClose={handleCancel}>
         <DialogTitle>Confirm Action</DialogTitle>
         <DialogContent>
-          Are you sure you want to {selectedAction.replace('-', ' ')}?
+          <Typography>{getConfirmationMessage()}</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setActionDialogOpen(false)}>Cancel</Button>
-          <Button onClick={confirmAction} variant="contained">Confirm</Button>
+          <Button onClick={handleCancel}>CANCEL</Button>
+          <Button onClick={handleConfirm} variant="contained">CONFIRM</Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Box>
   );
 };
 

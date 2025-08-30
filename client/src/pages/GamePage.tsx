@@ -12,6 +12,7 @@ const GamePage: React.FC = () => {
   const { gameId } = useParams<{ gameId: string }>();
   const [game, setGame] = useState<Game | null>(null);
   const [currentPlayer, setCurrentPlayer] = useState<string | null>(null);
+  const [selectedTokens, setSelectedTokens] = useState<any>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -59,6 +60,11 @@ const GamePage: React.FC = () => {
         playerId: currentPlayer
       };
       socketService.sendGameAction(gameId, action, payloadWithPlayer);
+      
+      // Clear selected tokens after taking them
+      if (action === 'take-tokens') {
+        setSelectedTokens({});
+      }
     } catch (error) {
       console.error('Error sending game action:', error);
     }
@@ -98,6 +104,8 @@ const GamePage: React.FC = () => {
           <GameBoard
             board={game.board}
             onCardAction={handleGameAction}
+            selectedTokens={selectedTokens}
+            onTokenSelectionChange={setSelectedTokens}
           />
         </Grid>
 
@@ -117,8 +125,7 @@ const GamePage: React.FC = () => {
 
       {currentPlayer && (
         <GameActions
-          game={game}
-          playerId={currentPlayer}
+          selectedTokens={selectedTokens}
           onAction={handleGameAction}
         />
       )}

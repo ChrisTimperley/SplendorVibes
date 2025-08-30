@@ -8,9 +8,16 @@ import TokenBank from './TokenBank';
 interface GameBoardProps {
   board: GameBoardType;
   onCardAction: (action: string, payload: any) => void;
+  selectedTokens: any;
+  onTokenSelectionChange: (tokens: any) => void;
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({ board, onCardAction }) => {
+const GameBoard: React.FC<GameBoardProps> = ({ 
+  board, 
+  onCardAction, 
+  selectedTokens, 
+  onTokenSelectionChange 
+}) => {
   const handleCardPurchase = (card: Card) => {
     onCardAction('purchase-card', { cardId: card.id });
   };
@@ -90,7 +97,11 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, onCardAction }) => {
         <Typography variant="h6" gutterBottom>
           Token Bank
         </Typography>
-        <TokenBank tokens={board.tokens} />
+        <TokenBank 
+          tokens={board.tokens} 
+          selectedTokens={selectedTokens}
+          onTokenSelectionChange={onTokenSelectionChange}
+        />
       </Paper>
     </Box>
   );
