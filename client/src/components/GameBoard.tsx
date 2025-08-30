@@ -1,0 +1,115 @@
+import React from 'react';
+import { Grid, Paper, Typography, Box } from '@mui/material';
+import { GameBoard as GameBoardType, Card } from '../../../shared/types/game';
+import CardComponent from './CardComponent';
+import TokenBank from './TokenBank';
+
+interface GameBoardProps {
+  board: GameBoardType;
+  onCardAction: (action: string, payload: any) => void;
+  onTokenAction: (action: string, payload: any) => void;
+}
+
+const GameBoard: React.FC<GameBoardProps> = ({ board, onCardAction, onTokenAction }) => {
+  const handleCardPurchase = (card: Card) => {
+    onCardAction('purchase-card', { cardId: card.id });
+  };
+
+  const handleCardReserve = (card: Card) => {
+    onCardAction('reserve-card', { cardId: card.id });
+  };
+
+  const handleTokenTake = (tokens: any) => {
+    onTokenAction('take-tokens', { tokens });
+  };
+
+  return (
+    <Box>
+      {/* Nobles */}
+      <Paper elevation={2} sx={{ p: 2, mb: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Nobles
+        </Typography>
+        <Grid container spacing={1}>
+          {board.nobles.map((noble) => (
+            <Grid item key={noble.id}>
+              <Paper
+                elevation={1}
+                sx={{
+                  p: 1,
+                  minWidth: 120,
+                  textAlign: 'center',
+                  bgcolor: 'gold',
+                  color: 'black'
+                }}
+              >
+                <Typography variant="body2" fontWeight="bold">
+                  {noble.prestige} Points
+                </Typography>
+                <Typography variant="caption">
+                  Requirements: {Object.entries(noble.requirements).map(([gem, count]) =>
+                    `${count} ${gem}`
+                  ).join(', ')}
+                </Typography>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      </Paper>
+
+      {/* Cards */}
+      <Paper elevation={2} sx={{ p: 2, mb: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Development Cards
+        </Typography>
+
+        {[3, 2, 1].map((tier) => (
+          <Box key={tier} sx={{ mb: 2 }}>
+            <Typography variant="subtitle1" gutterBottom>
+              Tier {tier}
+            </Typography>
+            <Grid container spacing={1}>
+              {board.availableCards[`tier${tier}` as keyof typeof board.availableCards].map((card) => (
+                <Grid item key={card.id}>
+                  <CardComponent
+                    card={card}
+                    onPurchase={() => handleCardPurchase(card)}
+                    onReserve={() => handleCardReserve(card)}
+                  />
+                </Grid>
+              ))}
+              {/* Deck indicator */}
+              <Grid item>
+                <Paper
+                  elevation={1}
+                  sx={{
+                    width: 80,
+                    height: 120,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    bgcolor: 'grey.300'
+                  }}
+                >
+                  <Typography variant="body2">
+                    {board.cardDecks[`tier${tier}` as keyof typeof board.cardDecks].length} left
+                  </Typography>
+                </Paper>
+              </Grid>
+            </Grid>
+          </Box>
+        ))}
+      </Paper>
+
+      {/* Token Bank */}
+      <Paper elevation={2} sx={{ p: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Token Bank
+        </Typography>
+        <TokenBank tokens={board.tokens} onTakeTokens={handleTokenTake} />
+      </Paper>
+    </Box>
+  );
+};
+
+export default GameBoard;

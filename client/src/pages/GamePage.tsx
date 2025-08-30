@@ -1,0 +1,121 @@
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Box, Grid, Typography, Paper } from '@mui/material';
+import { Game } from '../../../shared/types/game';
+import { gameService } from '../services/gameService';
+import { socketService } from '../services/socketService';
+import GameBoard from '../components/GameBoard';
+import PlayerArea from '../components/PlayerArea';
+import GameActions from '../components/GameActions';
+
+const GamePage: React.FC = () => {
+  const { gameId } = useParams<{ gameId: string }>();
+  const [game, setGame] = useState<Game | null>(null);
+  const [currentPlayer] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!gameId) return;
+
+    const initializeGame = async () => {
+      try {
+        const gameData = await gameService.getGame(gameId);
+        setGame(gameData);
+
+        // Initialize socket connection
+        socketService.connect();
+        socketService.joinGame(gameId, 'player-id'); // TODO: Get actual player ID
+
+        // Listen for game updates
+        socketService.onGameStateUpdate((updatedGame: Game) => {
+          setGame(updatedGame);
+        });
+
+      } catch (error) {
+        console.error('Error initializing game:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeGame();
+
+    return () => {
+      socketService.disconnect();
+    };
+  }, [gameId]);
+
+  const handleGameAction = async (action: string, payload: any) => {
+    if (!game || !gameId) return;
+
+    try {
+      socketService.sendGameAction(gameId, action, payload);
+    } catch (error) {
+      console.error('Error sending game action:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+        <Typography variant="h6">Loading game...</Typography>
+      </Box>
+    );
+  }
+
+  if (!game) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+        <Typography variant="h6">Game not found</Typography>
+      </Box>
+    );
+  }
+
+  const currentPlayerData = game.players[game.currentPlayerIndex];
+
+  return (
+    <Box sx={{ p: 2 }}>
+      <Paper elevation={2} sx={{ p: 2, mb: 2 }}>
+        <Typography variant="h5" gutterBottom>
+          Splendor Game - Turn {Math.floor((game.players.length * 10 + game.currentPlayerIndex) / game.players.length)}
+        </Typography>
+        <Typography variant="h6" color="primary">
+          Current Player: {currentPlayerData?.name}
+        </Typography>
+      </Paper>
+
+      <Grid container spacing={2}>
+        <Grid item xs={12} lg={8}>
+          <GameBoard
+            board={game.board}
+            onCardAction={handleGameAction}
+            onTokenAction={handleGameAction}
+          />
+        </Grid>
+
+        <Grid item xs={12} lg={4}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {game.players.map((player, index) => (
+              <PlayerArea
+                key={player.id}
+                player={player}
+                isCurrentPlayer={index === game.currentPlayerIndex}
+                isActivePlayer={player.id === currentPlayer}
+              />
+            ))}
+          </Box>
+        </Grid>
+      </Grid>
+
+      {currentPlayer && (
+        <GameActions
+          game={game}
+          playerId={currentPlayer}
+          onAction={handleGameAction}
+        />
+      )}
+    </Box>
+  );
+};
+
+export default GamePage;
