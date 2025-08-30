@@ -76,6 +76,8 @@ export class GameService {
 
     if (game.players.length >= 2) {
       game.state = GameState.IN_PROGRESS;
+      // Update nobles based on final player count
+      this.gameEngine.updateNoblesForPlayerCount(game);
     }
 
     this.games.set(gameId, game);

@@ -4,13 +4,11 @@ import { nobleData } from '../data/nobles';
 
 export class GameEngine {
 
-  initializeBoard(): GameBoard {
+  initializeBoard(playerCount?: number): GameBoard {
     const allCards = [...cardData];
-    const allNobles = [...nobleData];
 
     // Shuffle cards
     this.shuffleArray(allCards);
-    this.shuffleArray(allNobles);
 
     // Separate cards by tier
     const tier1Cards = allCards.filter(card => card.tier === 1);
@@ -28,7 +26,7 @@ export class GameEngine {
         tier2: tier2Cards,
         tier3: tier3Cards
       },
-      nobles: allNobles.splice(0, 5), // 5 nobles for any game
+      nobles: [], // Nobles will be set when game starts
       tokens: {
         diamond: 7,
         sapphire: 7,
@@ -38,6 +36,25 @@ export class GameEngine {
         gold: 5
       }
     };
+  }
+
+  updateNoblesForPlayerCount(game: Game): void {
+    const playerCount = game.players.length;
+    const allNobles = [...nobleData];
+
+    // Shuffle nobles
+    this.shuffleArray(allNobles);
+
+    // Determine number of nobles based on player count
+    let nobleCount = 5; // Default for 4 players
+    if (playerCount === 2) {
+      nobleCount = 3;
+    } else if (playerCount === 3) {
+      nobleCount = 4;
+    }
+
+    // Update the game board with the correct number of nobles
+    game.board.nobles = allNobles.splice(0, nobleCount);
   }
 
   takeTokens(game: Game, playerId: string, tokens: Partial<TokenBank>): Game {
