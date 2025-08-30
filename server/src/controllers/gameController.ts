@@ -79,14 +79,14 @@ export class GameController {
   takeTokens = async (req: Request, res: Response) => {
     const { gameId } = req.params;
     const { playerId, tokens } = req.body;
-    
+
     try {
       log.info('Take tokens action', { gameId, playerId, tokens });
       const game = await this.gameService.takeTokens(gameId, playerId, tokens);
-      log.info('Tokens taken successfully', { 
-        gameId, 
-        playerId, 
-        tokens, 
+      log.info('Tokens taken successfully', {
+        gameId,
+        playerId,
+        tokens,
         currentPlayer: game.currentPlayerIndex,
         playerTokens: game.players.find(p => p.id === playerId)?.tokens,
         boardTokens: game.board.tokens

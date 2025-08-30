@@ -12,11 +12,11 @@ interface GameBoardProps {
   onTokenSelectionChange: (tokens: any) => void;
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({ 
-  board, 
-  onCardAction, 
-  selectedTokens, 
-  onTokenSelectionChange 
+const GameBoard: React.FC<GameBoardProps> = ({
+  board,
+  onCardAction,
+  selectedTokens,
+  onTokenSelectionChange
 }) => {
   return (
     <Box>
@@ -88,8 +88,8 @@ const GameBoard: React.FC<GameBoardProps> = ({
         <Typography variant="h6" gutterBottom>
           Token Bank
         </Typography>
-        <TokenBank 
-          tokens={board.tokens} 
+        <TokenBank
+          tokens={board.tokens}
           selectedTokens={selectedTokens}
           onTokenSelectionChange={onTokenSelectionChange}
         />

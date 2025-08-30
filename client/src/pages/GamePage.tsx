@@ -60,7 +60,7 @@ const GamePage: React.FC = () => {
         playerId: currentPlayer
       };
       socketService.sendGameAction(gameId, action, payloadWithPlayer);
-      
+
       // Clear selected tokens after taking them
       if (action === 'take-tokens') {
         setSelectedTokens({});

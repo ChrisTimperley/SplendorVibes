@@ -60,14 +60,14 @@ export class GameSocketHandler {
         let gameId: string | undefined;
         let action: string | undefined;
         let payload: any;
-        
+
         try {
           ({ gameId, action, payload } = data);
-          
+
           if (!gameId || !action) {
             throw new Error('Missing gameId or action');
           }
-          
+
           log.info('Game action received', { socketId: socket.id, gameId, action, payload });
 
           let updatedGame;
@@ -88,15 +88,15 @@ export class GameSocketHandler {
               throw new Error('Unknown action');
           }
 
-          log.info('Broadcasting updated game state to all players', { 
-            gameId, 
+          log.info('Broadcasting updated game state to all players', {
+            gameId,
             currentPlayerIndex: updatedGame.currentPlayerIndex,
             gameState: updatedGame.state,
             playerCount: updatedGame.players.length
           });
           this.io.to(gameId).emit('game-state', updatedGame);
         } catch (actionError) {
-          log.error('Error processing game action', { 
+          log.error('Error processing game action', {
             gameId: gameId || 'unknown',
             action: action || data?.action || 'unknown',
             playerId: payload?.playerId || 'unknown',
@@ -108,7 +108,7 @@ export class GameSocketHandler {
       });
 
       socket.on('disconnect', () => {
-        log.info('Client disconnected', { 
+        log.info('Client disconnected', {
           socketId: socket.id,
           timestamp: new Date().toISOString()
         });
