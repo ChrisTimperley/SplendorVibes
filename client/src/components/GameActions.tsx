@@ -4,9 +4,10 @@ import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typogra
 interface GameActionsProps {
   selectedTokens: any;
   onAction: (actionType: string, payload: any) => void;
+  isCurrentPlayerTurn: boolean;
 }
 
-const GameActions: React.FC<GameActionsProps> = ({ selectedTokens, onAction }) => {
+const GameActions: React.FC<GameActionsProps> = ({ selectedTokens, onAction, isCurrentPlayerTurn }) => {
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
     action: string;
@@ -15,6 +16,7 @@ const GameActions: React.FC<GameActionsProps> = ({ selectedTokens, onAction }) =
 
   // Check if token selection is valid for taking
   const canTakeTokens = () => {
+    if (!isCurrentPlayerTurn) return false;
     const selectedGems = Object.entries(selectedTokens || {}).filter(([, count]) => count && (count as number) > 0);
     return selectedGems.length > 0;
   };
@@ -70,11 +72,12 @@ const GameActions: React.FC<GameActionsProps> = ({ selectedTokens, onAction }) =
           onClick={() => handleAction('take-tokens', { tokens: selectedTokens })}
           disabled={!canTakeTokens()}
           sx={{
-            bgcolor: '#1976d2',
-            '&:hover': { bgcolor: '#1565c0' }
+            bgcolor: isCurrentPlayerTurn ? '#1976d2' : '#9e9e9e',
+            '&:hover': { bgcolor: isCurrentPlayerTurn ? '#1565c0' : '#9e9e9e' },
+            '&:disabled': { bgcolor: '#e0e0e0', color: '#9e9e9e' }
           }}
         >
-          TAKE TOKENS
+          {!isCurrentPlayerTurn ? 'WAIT FOR YOUR TURN' : 'TAKE TOKENS'}
         </Button>
       </Box>
 

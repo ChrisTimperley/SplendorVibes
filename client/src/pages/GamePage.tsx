@@ -122,6 +122,7 @@ const GamePage: React.FC = () => {
         <GameActions
           selectedTokens={selectedTokens}
           onAction={handleGameAction}
+          isCurrentPlayerTurn={game.players[game.currentPlayerIndex]?.id === currentPlayer}
         />
       )}
     </Box>
