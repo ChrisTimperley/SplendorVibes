@@ -21,8 +21,10 @@ const HomePage: React.FC = () => {
 
     setLoading(true);
     try {
-      const game = await gameService.createGame(playerName);
-      navigate(`/lobby/${game.id}`);
+      const result = await gameService.createGame(playerName);
+      // Store the player ID for this session
+      localStorage.setItem('currentPlayerId', result.playerId);
+      navigate(`/lobby/${result.game.id}`);
     } catch (error) {
       console.error('Error creating game:', error);
     } finally {
@@ -35,7 +37,9 @@ const HomePage: React.FC = () => {
 
     setLoading(true);
     try {
-      await gameService.joinGame(gameId, playerName);
+      const result = await gameService.joinGame(gameId, playerName);
+      // Store the player ID for this session
+      localStorage.setItem('currentPlayerId', result.playerId);
       navigate(`/lobby/${gameId}`);
     } catch (error) {
       console.error('Error joining game:', error);

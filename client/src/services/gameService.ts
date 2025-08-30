@@ -1,6 +1,11 @@
 import axios from 'axios';
 import { Game } from '../../../shared/types/game';
 
+export interface GameJoinResponse {
+  game: Game;
+  playerId: string;
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 class GameService {
@@ -10,7 +15,7 @@ class GameService {
     this.baseURL = `${API_BASE_URL}/games`;
   }
 
-  async createGame(playerName: string): Promise<Game> {
+  async createGame(playerName: string): Promise<GameJoinResponse> {
     const response = await axios.post(this.baseURL, { playerName });
     return response.data;
   }
@@ -20,7 +25,7 @@ class GameService {
     return response.data;
   }
 
-  async joinGame(gameId: string, playerName: string): Promise<Game> {
+  async joinGame(gameId: string, playerName: string): Promise<GameJoinResponse> {
     const response = await axios.post(`${this.baseURL}/${gameId}/join`, { playerName });
     return response.data;
   }

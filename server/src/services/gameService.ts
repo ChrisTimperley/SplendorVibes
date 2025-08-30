@@ -2,6 +2,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { Game, Player, GameState } from '../../../shared/types/game';
 import { GameEngine } from '../../../shared/game/gameEngine';
 
+export interface GameJoinResponse {
+  game: Game;
+  playerId: string;
+}
+
 export class GameService {
   private games: Map<string, Game> = new Map();
   private gameEngine: GameEngine;
@@ -10,7 +15,7 @@ export class GameService {
     this.gameEngine = new GameEngine();
   }
 
-  async createGame(playerName: string): Promise<Game> {
+  async createGame(playerName: string): Promise<GameJoinResponse> {
     const gameId = uuidv4();
     const playerId = uuidv4();
 
@@ -35,7 +40,7 @@ export class GameService {
     };
 
     this.games.set(gameId, game);
-    return game;
+    return { game, playerId };
   }
 
   async getGame(gameId: string): Promise<Game> {
@@ -46,7 +51,7 @@ export class GameService {
     return game;
   }
 
-  async joinGame(gameId: string, playerName: string): Promise<Game> {
+  async joinGame(gameId: string, playerName: string): Promise<GameJoinResponse> {
     const game = this.games.get(gameId);
     if (!game) {
       throw new Error('Game not found');
@@ -81,7 +86,7 @@ export class GameService {
     }
 
     this.games.set(gameId, game);
-    return game;
+    return { game, playerId };
   }
 
   async leaveGame(gameId: string, playerId: string): Promise<Game> {

@@ -23,8 +23,14 @@ const GamePage: React.FC = () => {
         const gameData = await gameService.getGame(gameId);
         setGame(gameData);
 
-        // For demo purposes, use the first player's ID
-        const playerId = gameData.players[0]?.id || 'demo-player';
+        // Get the current player ID from localStorage
+        const storedPlayerId = localStorage.getItem('currentPlayerId');
+        const playerId = storedPlayerId || gameData.players[0]?.id || 'demo-player';
+
+        if (!storedPlayerId) {
+          console.error('No player ID found in localStorage, using fallback');
+        }
+
         setCurrentPlayer(playerId);
 
         // Initialize socket connection

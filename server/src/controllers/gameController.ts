@@ -16,17 +16,17 @@ const log = {
 export class GameController {
   private gameService: GameService;
 
-  constructor() {
-    this.gameService = new GameService();
+  constructor(gameService: GameService) {
+    this.gameService = gameService;
   }
 
   createGame = async (req: Request, res: Response) => {
     try {
       const { playerName } = req.body;
       log.info('Creating new game', { playerName });
-      const game = await this.gameService.createGame(playerName);
-      log.info('Game created successfully', { gameId: game.id, playerId: game.players[0].id });
-      res.status(201).json(game);
+      const result = await this.gameService.createGame(playerName);
+      log.info('Game created successfully', { gameId: result.game.id, playerId: result.playerId });
+      res.status(201).json(result);
     } catch (error) {
       log.error('Failed to create game', error);
       res.status(400).json({ error: (error as Error).message });
@@ -49,8 +49,8 @@ export class GameController {
     try {
       const { gameId } = req.params;
       const { playerName } = req.body;
-      const game = await this.gameService.joinGame(gameId, playerName);
-      res.json(game);
+      const result = await this.gameService.joinGame(gameId, playerName);
+      res.json(result);
     } catch (error) {
       res.status(400).json({ error: (error as Error).message });
     }

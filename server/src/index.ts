@@ -7,8 +7,12 @@ import dotenv from 'dotenv';
 import path from 'path';
 import gameRoutes from './routes/gameRoutes';
 import { GameSocketHandler } from './sockets/gameSocket';
+import { GameService } from './services/gameService';
 
 dotenv.config();
+
+// Create a shared GameService instance
+const gameService = new GameService();
 
 // Enhanced logging utility
 const log = {
@@ -66,7 +70,7 @@ console.log('__dirname is:', __dirname);
 app.use('/docs', express.static(docsPath));
 
 // Routes
-app.use('/api/games', gameRoutes);
+app.use('/api/games', gameRoutes(gameService));
 
 // API Documentation endpoint
 app.get('/api-spec', (req, res) => {
@@ -80,7 +84,7 @@ app.get('/health', (req, res) => {
 });
 
 // Socket.IO handling
-const gameSocketHandler = new GameSocketHandler(io);
+const gameSocketHandler = new GameSocketHandler(io, gameService);
 gameSocketHandler.initialize();
 
 // Error handling middleware

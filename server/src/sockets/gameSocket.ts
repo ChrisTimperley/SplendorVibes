@@ -17,9 +17,9 @@ export class GameSocketHandler {
   private io: Server;
   private gameService: GameService;
 
-  constructor(io: Server) {
+  constructor(io: Server, gameService: GameService) {
     this.io = io;
-    this.gameService = new GameService();
+    this.gameService = gameService;
   }
 
   initialize() {
