@@ -64,11 +64,11 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, onCardAction, onTokenActio
         </Typography>
 
         {[3, 2, 1].map((tier) => (
-          <Box key={tier} sx={{ mb: 2 }}>
-            <Typography variant="subtitle1" gutterBottom>
+          <Box key={tier} sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
               Tier {tier}
             </Typography>
-            <Grid container spacing={1}>
+            <Grid container spacing={2}>
               {board.availableCards[`tier${tier}` as keyof typeof board.availableCards].map((card) => (
                 <Grid item key={card.id}>
                   <CardComponent
@@ -83,16 +83,22 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, onCardAction, onTokenActio
                 <Paper
                   elevation={1}
                   sx={{
-                    width: 80,
-                    height: 120,
+                    width: 140,
+                    height: 200,
                     display: 'flex',
+                    flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    bgcolor: 'grey.300'
+                    bgcolor: 'grey.300',
+                    border: '3px solid #ccc',
+                    borderStyle: 'dashed'
                   }}
                 >
-                  <Typography variant="body2">
-                    {board.cardDecks[`tier${tier}` as keyof typeof board.cardDecks].length} left
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    {board.cardDecks[`tier${tier}` as keyof typeof board.cardDecks].length}
+                  </Typography>
+                  <Typography variant="caption" align="center">
+                    cards left
                   </Typography>
                 </Paper>
               </Grid>
