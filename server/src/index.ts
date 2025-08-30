@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
+import path from 'path';
 import gameRoutes from './routes/gameRoutes';
 import { GameSocketHandler } from './sockets/gameSocket';
 
@@ -28,14 +29,19 @@ app.use(cors({
 app.use(express.json());
 
 // Serve static files from docs directory
-app.use('/docs', express.static('../../docs'));
+// From dist/index.js, go up to server/, then up to project root, then into docs/
+const docsPath = path.resolve(__dirname, '../../docs');
+console.log('Serving docs from:', docsPath);
+console.log('__dirname is:', __dirname);
+app.use('/docs', express.static(docsPath));
 
 // Routes
 app.use('/api/games', gameRoutes);
 
 // API Documentation endpoint
 app.get('/api-spec', (req, res) => {
-  res.sendFile(require('path').join(__dirname, '../../docs/api-spec.yaml'));
+  const specPath = path.resolve(__dirname, '../../docs/api-spec.yaml');
+  res.sendFile(specPath);
 });
 
 // Health check endpoint
