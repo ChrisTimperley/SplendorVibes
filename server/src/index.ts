@@ -10,6 +10,26 @@ import { GameSocketHandler } from './sockets/gameSocket';
 
 dotenv.config();
 
+// Enhanced logging utility
+const log = {
+  info: (message: string, data?: any) => {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] INFO: ${message}`, data ? JSON.stringify(data, null, 2) : '');
+  },
+  error: (message: string, error?: any) => {
+    const timestamp = new Date().toISOString();
+    console.error(`[${timestamp}] ERROR: ${message}`, error ? error.stack || error : '');
+  },
+  warn: (message: string, data?: any) => {
+    const timestamp = new Date().toISOString();
+    console.warn(`[${timestamp}] WARN: ${message}`, data ? JSON.stringify(data, null, 2) : '');
+  },
+  debug: (message: string, data?: any) => {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] DEBUG: ${message}`, data ? JSON.stringify(data, null, 2) : '');
+  }
+};
+
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
@@ -17,6 +37,16 @@ const io = new Server(server, {
     origin: process.env.CLIENT_URL || "http://localhost:3000",
     methods: ["GET", "POST"]
   }
+});
+
+// Request logging middleware
+app.use((req, res, next) => {
+  const timestamp = new Date().toISOString();
+  console.log(`[${timestamp}] ${req.method} ${req.path} - ${req.ip}`);
+  if (req.body && Object.keys(req.body).length > 0) {
+    console.log(`[${timestamp}] Request body:`, JSON.stringify(req.body, null, 2));
+  }
+  next();
 });
 
 const PORT = process.env.PORT || 3001;

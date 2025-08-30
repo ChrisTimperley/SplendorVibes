@@ -4,8 +4,7 @@ import { Card, GemType } from '../../../shared/types/game';
 
 interface CardComponentProps {
   card: Card;
-  onPurchase: () => void;
-  onReserve: () => void;
+  onAction: (action: string, payload: any) => void;
 }
 
 const gemColors = {
@@ -17,7 +16,14 @@ const gemColors = {
   [GemType.GOLD]: '#ffcc00'
 };
 
-const CardComponent: React.FC<CardComponentProps> = ({ card, onPurchase, onReserve }) => {
+const CardComponent: React.FC<CardComponentProps> = ({ card, onAction }) => {
+  const handlePurchase = () => {
+    onAction('purchase-card', { cardId: card.id });
+  };
+
+  const handleReserve = () => {
+    onAction('reserve-card', { cardId: card.id });
+  };
   return (
     <Paper
       elevation={3}
@@ -170,7 +176,7 @@ const CardComponent: React.FC<CardComponentProps> = ({ card, onPurchase, onReser
         <Button
           size="small"
           variant="contained"
-          onClick={onPurchase}
+          onClick={handlePurchase}
           sx={{
             fontSize: '0.6rem',
             py: 0.4,
@@ -193,7 +199,7 @@ const CardComponent: React.FC<CardComponentProps> = ({ card, onPurchase, onReser
         <Button
           size="small"
           variant="outlined"
-          onClick={onReserve}
+          onClick={handleReserve}
           sx={{
             fontSize: '0.6rem',
             py: 0.4,

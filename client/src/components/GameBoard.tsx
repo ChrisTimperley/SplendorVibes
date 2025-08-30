@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paper, Typography, Box, Grid } from '@mui/material';
-import { GameBoard as GameBoardType, Card } from '../../../shared/types/game';
+import { GameBoard as GameBoardType } from '../../../shared/types/game';
 import CardComponent from './CardComponent';
 import NobleComponent from './NobleComponent';
 import TokenBank from './TokenBank';
@@ -18,14 +18,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
   selectedTokens, 
   onTokenSelectionChange 
 }) => {
-  const handleCardPurchase = (card: Card) => {
-    onCardAction('purchase-card', { cardId: card.id });
-  };
-
-  const handleCardReserve = (card: Card) => {
-    onCardAction('reserve-card', { cardId: card.id });
-  };
-
   return (
     <Box>
       {/* Nobles */}
@@ -58,8 +50,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
                 <Grid item key={card.id}>
                   <CardComponent
                     card={card}
-                    onPurchase={() => handleCardPurchase(card)}
-                    onReserve={() => handleCardReserve(card)}
+                    onAction={onCardAction}
                   />
                 </Grid>
               ))}
