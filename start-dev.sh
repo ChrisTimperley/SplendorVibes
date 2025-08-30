@@ -17,8 +17,11 @@ fi
 
 echo "🚀 Starting development servers..."
 echo "   - Backend API: http://localhost:3001"
-echo "   - Frontend: http://localhost:3000"
+echo "   - API Documentation: http://localhost:3001/docs/index.html"
+echo "   - Frontend: http://localhost:3000 (or next available port)"
 echo ""
+echo "Note: If ports 3000/3001 are in use, Vite will automatically find the next available port"
+echo "Watch the terminal output below for the actual frontend URL"
 echo "Press Ctrl+C to stop all servers"
 echo "=================================================="
 
