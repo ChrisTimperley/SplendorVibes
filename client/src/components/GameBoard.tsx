@@ -8,20 +8,15 @@ import TokenBank from './TokenBank';
 interface GameBoardProps {
   board: GameBoardType;
   onCardAction: (action: string, payload: any) => void;
-  onTokenAction: (action: string, payload: any) => void;
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({ board, onCardAction, onTokenAction }) => {
+const GameBoard: React.FC<GameBoardProps> = ({ board, onCardAction }) => {
   const handleCardPurchase = (card: Card) => {
     onCardAction('purchase-card', { cardId: card.id });
   };
 
   const handleCardReserve = (card: Card) => {
     onCardAction('reserve-card', { cardId: card.id });
-  };
-
-  const handleTokenTake = (tokens: any) => {
-    onTokenAction('take-tokens', { tokens });
   };
 
   return (
@@ -95,7 +90,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, onCardAction, onTokenActio
         <Typography variant="h6" gutterBottom>
           Token Bank
         </Typography>
-        <TokenBank tokens={board.tokens} onTakeTokens={handleTokenTake} />
+        <TokenBank tokens={board.tokens} />
       </Paper>
     </Box>
   );

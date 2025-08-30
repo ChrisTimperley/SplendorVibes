@@ -11,7 +11,7 @@ import GameActions from '../components/GameActions';
 const GamePage: React.FC = () => {
   const { gameId } = useParams<{ gameId: string }>();
   const [game, setGame] = useState<Game | null>(null);
-  const [currentPlayer] = useState<string | null>(null);
+  const [currentPlayer, setCurrentPlayer] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,9 +22,13 @@ const GamePage: React.FC = () => {
         const gameData = await gameService.getGame(gameId);
         setGame(gameData);
 
+        // For demo purposes, use the first player's ID
+        const playerId = gameData.players[0]?.id || 'demo-player';
+        setCurrentPlayer(playerId);
+
         // Initialize socket connection
         socketService.connect();
-        socketService.joinGame(gameId, 'player-id'); // TODO: Get actual player ID
+        socketService.joinGame(gameId, playerId);
 
         // Listen for game updates
         socketService.onGameStateUpdate((updatedGame: Game) => {
@@ -46,10 +50,15 @@ const GamePage: React.FC = () => {
   }, [gameId]);
 
   const handleGameAction = async (action: string, payload: any) => {
-    if (!game || !gameId) return;
+    if (!game || !gameId || !currentPlayer) return;
 
     try {
-      socketService.sendGameAction(gameId, action, payload);
+      // Add playerId to all payloads
+      const payloadWithPlayer = {
+        ...payload,
+        playerId: currentPlayer
+      };
+      socketService.sendGameAction(gameId, action, payloadWithPlayer);
     } catch (error) {
       console.error('Error sending game action:', error);
     }
@@ -89,7 +98,6 @@ const GamePage: React.FC = () => {
           <GameBoard
             board={game.board}
             onCardAction={handleGameAction}
-            onTokenAction={handleGameAction}
           />
         </Grid>
 

@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Button, Typography, Chip } from '@mui/material';
+import { Box, Button, Typography, Chip, Alert } from '@mui/material';
 import { TokenBank as TokenBankType, GemType } from '../../../shared/types/game';
 
 interface TokenBankProps {
   tokens: TokenBankType;
-  onTakeTokens: (tokens: Partial<TokenBankType>) => void;
 }
 
 const gemColors = {
@@ -16,39 +15,65 @@ const gemColors = {
   [GemType.GOLD]: '#ffcc00'
 };
 
-const TokenBank: React.FC<TokenBankProps> = ({ tokens, onTakeTokens }) => {
+const TokenBank: React.FC<TokenBankProps> = ({ tokens }) => {
   const [selectedTokens, setSelectedTokens] = useState<Partial<TokenBankType>>({});
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
+  const validateSelection = (newSelection: Partial<TokenBankType>): string => {
+    const selectedGems = Object.entries(newSelection).filter(([, count]) => count && count > 0);
+
+    if (selectedGems.length === 0) return '';
+
+    // Rule 1: Take 3 different gems
+    if (selectedGems.length === 3) {
+      const allSingleGems = selectedGems.every(([, count]) => count === 1);
+      if (!allSingleGems) {
+        return 'When taking 3 gems, you can only take 1 of each type.';
+      }
+      return '';
+    }
+
+    // Rule 2: Take 2 of the same gem (if 4+ available)
+    if (selectedGems.length === 1) {
+      const [gem, count] = selectedGems[0];
+      if (count === 2) {
+        if (tokens[gem as keyof TokenBankType] < 4) {
+          return 'You can only take 2 of the same gem if there are 4 or more available.';
+        }
+        return '';
+      }
+      if (count === 1) {
+        return '';
+      }
+      return 'Invalid selection.';
+    }
+
+    // Invalid combinations
+    if (selectedGems.length === 2) {
+      return 'You can take either 3 different gems OR 2 of the same gem (if 4+ available).';
+    }
+
+    return 'Invalid token selection.';
+  };
 
   const handleTokenClick = (gem: keyof TokenBankType) => {
     const current = selectedTokens[gem] || 0;
     const available = tokens[gem];
 
+    let newSelection: Partial<TokenBankType>;
+
     if (current === 0 && available > 0) {
-      setSelectedTokens(prev => ({ ...prev, [gem]: 1 }));
+      newSelection = { ...selectedTokens, [gem]: 1 };
     } else if (current === 1 && available >= 4) {
-      setSelectedTokens(prev => ({ ...prev, [gem]: 2 }));
+      newSelection = { ...selectedTokens, [gem]: 2 };
     } else {
-      setSelectedTokens(prev => {
-        const newTokens = { ...prev };
-        delete newTokens[gem];
-        return newTokens;
-      });
+      newSelection = { ...selectedTokens };
+      delete newSelection[gem];
     }
-  };
 
-  const handleTakeTokens = () => {
-    onTakeTokens(selectedTokens);
-    setSelectedTokens({});
-  };
-
-  const selectedCount = Object.values(selectedTokens).reduce((sum, count) => sum + (count || 0), 0);
-  const selectedGemTypes = Object.keys(selectedTokens).length;
-
-  const isValidSelection = () => {
-    if (selectedCount === 0) return false;
-    if (selectedGemTypes === 3 && selectedCount === 3) return true;
-    if (selectedGemTypes === 1 && selectedCount === 2) return true;
-    return false;
+    const error = validateSelection(newSelection);
+    setErrorMessage(error);
+    setSelectedTokens(newSelection);
   };
 
   return (
@@ -102,21 +127,21 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, onTakeTokens }) => {
         })}
       </Box>
 
-      {selectedCount > 0 && (
-        <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="body2" sx={{ mb: 1 }}>
+      {/* Error message */}
+      {errorMessage && (
+        <Alert severity="error" sx={{ mt: 1 }}>
+          {errorMessage}
+        </Alert>
+      )}
+
+      {/* Selection summary */}
+      {Object.keys(selectedTokens).length > 0 && !errorMessage && (
+        <Box sx={{ mt: 1, p: 1, bgcolor: 'success.light', borderRadius: 1 }}>
+          <Typography variant="body2" color="success.dark">
             Selected: {Object.entries(selectedTokens).map(([gem, count]) =>
               `${count} ${gem}`
             ).join(', ')}
           </Typography>
-          <Button
-            variant="contained"
-            onClick={handleTakeTokens}
-            disabled={!isValidSelection()}
-            color={isValidSelection() ? 'primary' : 'error'}
-          >
-            Take Tokens
-          </Button>
         </Box>
       )}
     </Box>
