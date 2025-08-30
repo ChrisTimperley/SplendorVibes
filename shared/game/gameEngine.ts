@@ -224,10 +224,10 @@ export class GameEngine {
 
   private calculateMinimumPayment(player: Player, card: Card): Partial<TokenBank> {
     const payment: Partial<TokenBank> = {};
-    
+
     // Calculate player's buying power (tokens + card bonuses)
     const playerGems = { ...player.tokens };
-    
+
     // Add gem bonuses from owned cards
     player.cards.forEach(ownedCard => {
       if (ownedCard.gemBonus) {
@@ -241,7 +241,7 @@ export class GameEngine {
       const available = playerGems[gemType] || 0;
       const cardBonuses = player.cards.filter(c => c.gemBonus === gemType).length;
       const tokensNeeded = Math.max(0, (cost || 0) - cardBonuses);
-      
+
       if (tokensNeeded > 0) {
         payment[gemType] = tokensNeeded;
       }
