@@ -20,6 +20,7 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActi
       }}
     >
       <Typography variant="h6" gutterBottom>
+        {isActivePlayer && <strong style={{ color: '#1976d2' }}>You: </strong>}
         {player.name} {isCurrentPlayer && '(Current Turn)'}
       </Typography>
 
