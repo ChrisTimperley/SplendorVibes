@@ -131,7 +131,7 @@ export class GameService {
     return updatedGame;
   }
 
-  async purchaseCard(gameId: string, playerId: string, cardId: string, payment: any): Promise<Game> {
+  async purchaseCard(gameId: string, playerId: string, cardId: string, payment?: any): Promise<Game> {
     const game = this.games.get(gameId);
     if (!game) {
       throw new Error('Game not found');

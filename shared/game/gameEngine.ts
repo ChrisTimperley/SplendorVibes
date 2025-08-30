@@ -82,7 +82,7 @@ export class GameEngine {
     return game;
   }
 
-  purchaseCard(game: Game, playerId: string, cardId: string, payment: Partial<TokenBank>): Game {
+  purchaseCard(game: Game, playerId: string, cardId: string, payment?: Partial<TokenBank>): Game {
     const player = this.getPlayer(game, playerId);
 
     if (!this.isPlayerTurn(game, playerId)) {
@@ -94,12 +94,17 @@ export class GameEngine {
       throw new Error('Card not found');
     }
 
+    // Auto-calculate payment if not provided
+    if (!payment) {
+      payment = this.calculateMinimumPayment(player, card);
+    }
+
     if (!this.canAffordCard(player, card, payment)) {
       throw new Error('Cannot afford card');
     }
 
-    // Pay for card
-    this.payForCard(game, player, payment);
+    // Pay for card (payment is guaranteed to be defined here)
+    this.payForCard(game, player, payment!);
 
     // Add card to player
     player.cards.push(card);
@@ -190,21 +195,59 @@ export class GameEngine {
     return false;
   }
 
-  private canAffordCard(player: Player, card: Card, payment: Partial<TokenBank>): boolean {
+  private canAffordCard(player: Player, card: Card, payment?: Partial<TokenBank>): boolean {
     // Calculate player's buying power (tokens + card bonuses)
     const playerGems = { ...player.tokens };
 
     // Add gem bonuses from owned cards
     player.cards.forEach(ownedCard => {
-      playerGems[ownedCard.gemBonus] += 1;
+      if (ownedCard.gemBonus) {
+        playerGems[ownedCard.gemBonus] = (playerGems[ownedCard.gemBonus] || 0) + 1;
+      }
     });
 
-    // Check if payment covers the cost
+    // If no payment specified, auto-calculate minimum payment needed
+    if (!payment) {
+      return Object.entries(card.cost).every(([gem, cost]) => {
+        const available = playerGems[gem as keyof TokenBank] || 0;
+        return available >= (cost || 0);
+      });
+    }
+
+    // Check if specified payment covers the cost
     return Object.entries(card.cost).every(([gem, cost]) => {
       const available = playerGems[gem as keyof TokenBank] || 0;
       const paid = payment[gem as keyof TokenBank] || 0;
       return paid <= available && paid >= Math.max(0, (cost || 0) - (playerGems[gem as keyof TokenBank] || 0));
     });
+  }
+
+  private calculateMinimumPayment(player: Player, card: Card): Partial<TokenBank> {
+    const payment: Partial<TokenBank> = {};
+    
+    // Calculate player's buying power (tokens + card bonuses)
+    const playerGems = { ...player.tokens };
+    
+    // Add gem bonuses from owned cards
+    player.cards.forEach(ownedCard => {
+      if (ownedCard.gemBonus) {
+        playerGems[ownedCard.gemBonus] = (playerGems[ownedCard.gemBonus] || 0) + 1;
+      }
+    });
+
+    // Calculate minimum payment needed for each gem type
+    Object.entries(card.cost).forEach(([gem, cost]) => {
+      const gemType = gem as keyof TokenBank;
+      const available = playerGems[gemType] || 0;
+      const cardBonuses = player.cards.filter(c => c.gemBonus === gemType).length;
+      const tokensNeeded = Math.max(0, (cost || 0) - cardBonuses);
+      
+      if (tokensNeeded > 0) {
+        payment[gemType] = tokensNeeded;
+      }
+    });
+
+    return payment;
   }
 
   private payForCard(game: Game, player: Player, payment: Partial<TokenBank>): void {
