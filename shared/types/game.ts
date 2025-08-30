@@ -32,6 +32,7 @@ export interface Card {
 
 export interface Noble {
   id: string;
+  name: string;
   prestige: number;
   requirements: Partial<TokenBank>;
 }

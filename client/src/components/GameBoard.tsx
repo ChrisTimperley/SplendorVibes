@@ -1,7 +1,8 @@
 import React from 'react';
-import { Grid, Paper, Typography, Box } from '@mui/material';
+import { Paper, Typography, Box, Grid } from '@mui/material';
 import { GameBoard as GameBoardType, Card } from '../../../shared/types/game';
 import CardComponent from './CardComponent';
+import NobleComponent from './NobleComponent';
 import TokenBank from './TokenBank';
 
 interface GameBoardProps {
@@ -33,25 +34,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, onCardAction, onTokenActio
         <Grid container spacing={1}>
           {board.nobles.map((noble) => (
             <Grid item key={noble.id}>
-              <Paper
-                elevation={1}
-                sx={{
-                  p: 1,
-                  minWidth: 120,
-                  textAlign: 'center',
-                  bgcolor: 'gold',
-                  color: 'black'
-                }}
-              >
-                <Typography variant="body2" fontWeight="bold">
-                  {noble.prestige} Points
-                </Typography>
-                <Typography variant="caption">
-                  Requirements: {Object.entries(noble.requirements).map(([gem, count]) =>
-                    `${count} ${gem}`
-                  ).join(', ')}
-                </Typography>
-              </Paper>
+              <NobleComponent noble={noble} />
             </Grid>
           ))}
         </Grid>

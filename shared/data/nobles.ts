@@ -3,6 +3,7 @@ import { Noble, GemType } from '../types/game';
 export const nobleData: Noble[] = [
   {
     id: 'noble_1',
+    name: 'Catherine de\' Medici',
     prestige: 3,
     requirements: {
       diamond: 3,
@@ -12,6 +13,7 @@ export const nobleData: Noble[] = [
   },
   {
     id: 'noble_2',
+    name: 'Elisabeth of Austria',
     prestige: 3,
     requirements: {
       sapphire: 3,
@@ -21,6 +23,7 @@ export const nobleData: Noble[] = [
   },
   {
     id: 'noble_3',
+    name: 'Isabella I of Castile',
     prestige: 3,
     requirements: {
       emerald: 3,
@@ -30,6 +33,7 @@ export const nobleData: Noble[] = [
   },
   {
     id: 'noble_4',
+    name: 'Niccolò Machiavelli',
     prestige: 3,
     requirements: {
       ruby: 3,
@@ -39,6 +43,7 @@ export const nobleData: Noble[] = [
   },
   {
     id: 'noble_5',
+    name: 'Suleiman the Magnificent',
     prestige: 3,
     requirements: {
       onyx: 3,
@@ -48,6 +53,7 @@ export const nobleData: Noble[] = [
   },
   {
     id: 'noble_6',
+    name: 'Anne of Brittany',
     prestige: 3,
     requirements: {
       diamond: 4,
@@ -56,6 +62,7 @@ export const nobleData: Noble[] = [
   },
   {
     id: 'noble_7',
+    name: 'Charles V',
     prestige: 3,
     requirements: {
       sapphire: 4,
@@ -64,6 +71,7 @@ export const nobleData: Noble[] = [
   },
   {
     id: 'noble_8',
+    name: 'Francis I of France',
     prestige: 3,
     requirements: {
       emerald: 4,
@@ -72,6 +80,7 @@ export const nobleData: Noble[] = [
   },
   {
     id: 'noble_9',
+    name: 'Henry VIII',
     prestige: 3,
     requirements: {
       ruby: 4,
@@ -80,6 +89,7 @@ export const nobleData: Noble[] = [
   },
   {
     id: 'noble_10',
+    name: 'Mary Stuart',
     prestige: 3,
     requirements: {
       onyx: 4,
