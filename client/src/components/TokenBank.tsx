@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Alert, Button, Chip } from '@mui/material';
 import { TokenBank as TokenBankType, GemType } from '../../../shared/types/game';
+import { gemColors } from '../constants/gemColors';
 
 interface TokenBankProps {
   tokens: TokenBankType;
   selectedTokens: Partial<TokenBankType>;
   onTokenSelectionChange: (tokens: Partial<TokenBankType>) => void;
 }
-
-const gemColors = {
-  [GemType.DIAMOND]: '#ffffff',
-  [GemType.SAPPHIRE]: '#0066cc',
-  [GemType.EMERALD]: '#00cc66',
-  [GemType.RUBY]: '#cc0000',
-  [GemType.ONYX]: '#333333',
-  [GemType.GOLD]: '#ffcc00'
-};
 
 const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSelectionChange }) => {
   const [errorMessage, setErrorMessage] = useState<string>('');

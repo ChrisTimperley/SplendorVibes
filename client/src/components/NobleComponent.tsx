@@ -1,19 +1,11 @@
 import React from 'react';
 import { Paper, Typography, Box } from '@mui/material';
 import { Noble, GemType } from '../../../shared/types/game';
+import { gemColors } from '../constants/gemColors';
 
 interface NobleComponentProps {
   noble: Noble;
 }
-
-const gemColors = {
-  [GemType.DIAMOND]: '#f8f8ff',
-  [GemType.SAPPHIRE]: '#0066cc',
-  [GemType.EMERALD]: '#00cc66',
-  [GemType.RUBY]: '#cc0000',
-  [GemType.ONYX]: '#2c2c2c',
-  [GemType.GOLD]: '#ffcc00'
-};
 
 const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
   return (

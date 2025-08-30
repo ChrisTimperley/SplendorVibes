@@ -1,21 +1,13 @@
 import React from 'react';
 import { Paper, Typography, Box, Chip } from '@mui/material';
 import { Player, GemType } from '../../../shared/types/game';
+import { gemColors } from '../constants/gemColors';
 
 interface PlayerAreaProps {
   player: Player;
   isCurrentPlayer: boolean;
   isActivePlayer: boolean;
 }
-
-const gemColors = {
-  [GemType.DIAMOND]: '#ffffff',
-  [GemType.SAPPHIRE]: '#0066cc',
-  [GemType.EMERALD]: '#00cc66',
-  [GemType.RUBY]: '#cc0000',
-  [GemType.ONYX]: '#333333',
-  [GemType.GOLD]: '#ffcc00'
-};
 
 const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActivePlayer }) => {
   return (

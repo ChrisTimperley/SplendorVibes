@@ -1,20 +1,12 @@
 import React from 'react';
 import { Paper, Typography, Box, Button } from '@mui/material';
 import { Card, GemType } from '../../../shared/types/game';
+import { gemColors } from '../constants/gemColors';
 
 interface CardComponentProps {
   card: Card;
   onAction: (action: string, payload: any) => void;
 }
-
-const gemColors = {
-  [GemType.DIAMOND]: '#f8f8ff',
-  [GemType.SAPPHIRE]: '#0066cc',
-  [GemType.EMERALD]: '#00cc66',
-  [GemType.RUBY]: '#cc0000',
-  [GemType.ONYX]: '#2c2c2c',
-  [GemType.GOLD]: '#ffcc00'
-};
 
 const CardComponent: React.FC<CardComponentProps> = ({ card, onAction }) => {
   const handlePurchase = () => {
