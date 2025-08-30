@@ -27,8 +27,16 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Serve static files from docs directory
+app.use('/docs', express.static('../../docs'));
+
 // Routes
 app.use('/api/games', gameRoutes);
+
+// API Documentation endpoint
+app.get('/api-spec', (req, res) => {
+  res.sendFile(require('path').join(__dirname, '../../docs/api-spec.yaml'));
+});
 
 // Health check endpoint
 app.get('/health', (req, res) => {

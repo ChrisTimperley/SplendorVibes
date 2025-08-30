@@ -1,0 +1,716 @@
+openapi: 3.0.3
+info:
+  title: Splendor Board Game API
+  description: |
+    REST API for the Splendor board game implementation. This API handles game management,
+    player actions, and game state operations for the web-based Splendor game.
+
+    ## Game Flow
+    1. Create a new game with a player name
+    2. Other players join using the game ID
+    3. Game starts when 2+ players are present
+    4. Players take turns performing actions via WebSocket or HTTP
+
+    ## Real-time Updates
+    This API works in conjunction with Socket.IO for real-time game updates.
+    All game state changes are broadcast to connected players via WebSocket events.
+  version: 1.0.0
+  contact:
+    name: Splendor Game API
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3001
+    description: Development server
+  - url: http://localhost:3001/api
+    description: API base path
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns server health status and timestamp
+      tags:
+        - System
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "OK"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2025-08-30T18:55:41.118Z"
+
+  /api/games:
+    get:
+      summary: List all active games
+      description: Retrieves a list of all currently active games
+      tags:
+        - Game Management
+      responses:
+        '200':
+          description: List of games retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: Create a new game
+      description: Creates a new Splendor game with the specified player as the host
+      tags:
+        - Game Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - playerName
+              properties:
+                playerName:
+                  type: string
+                  description: Name of the player creating the game
+                  example: "Alice"
+                  minLength: 1
+                  maxLength: 50
+      responses:
+        '201':
+          description: Game created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/games/{gameId}:
+    get:
+      summary: Get game state
+      description: Retrieves the current state of a specific game
+      tags:
+        - Game Management
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          description: Unique identifier of the game
+          schema:
+            type: string
+            format: uuid
+            example: "123e4567-e89b-12d3-a456-426614174000"
+      responses:
+        '200':
+          description: Game state retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '404':
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/games/{gameId}/join:
+    post:
+      summary: Join an existing game
+      description: Adds a player to an existing game
+      tags:
+        - Game Management
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          description: Unique identifier of the game to join
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - playerName
+              properties:
+                playerName:
+                  type: string
+                  description: Name of the player joining the game
+                  example: "Bob"
+                  minLength: 1
+                  maxLength: 50
+      responses:
+        '200':
+          description: Successfully joined the game
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '400':
+          description: Cannot join game (full, already started, etc.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/games/{gameId}/leave:
+    post:
+      summary: Leave a game
+      description: Removes a player from the game
+      tags:
+        - Game Management
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          description: Unique identifier of the game
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - playerId
+              properties:
+                playerId:
+                  type: string
+                  format: uuid
+                  description: Unique identifier of the player leaving
+                  example: "987fcdeb-51a2-43d1-9f4e-123456789abc"
+      responses:
+        '200':
+          description: Successfully left the game
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '400':
+          description: Invalid request or player not in game
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/games/{gameId}/actions/take-tokens:
+    post:
+      summary: Take gem tokens
+      description: |
+        Player takes gem tokens from the bank. Rules:
+        - Take 3 different colored gems, OR
+        - Take 2 gems of the same color (if 4+ available)
+      tags:
+        - Game Actions
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - playerId
+                - tokens
+              properties:
+                playerId:
+                  type: string
+                  format: uuid
+                  description: ID of the player taking tokens
+                tokens:
+                  $ref: '#/components/schemas/TokenSelection'
+            examples:
+              threeDifferent:
+                summary: Take 3 different gems
+                value:
+                  playerId: "123e4567-e89b-12d3-a456-426614174000"
+                  tokens:
+                    diamond: 1
+                    sapphire: 1
+                    emerald: 1
+              twoSame:
+                summary: Take 2 of the same gem
+                value:
+                  playerId: "123e4567-e89b-12d3-a456-426614174000"
+                  tokens:
+                    ruby: 2
+      responses:
+        '200':
+          description: Tokens taken successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '400':
+          description: Invalid token selection or not player's turn
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/games/{gameId}/actions/purchase-card:
+    post:
+      summary: Purchase a development card
+      description: |
+        Player purchases a development card using gems and card bonuses.
+        The card provides permanent gem bonuses and prestige points.
+      tags:
+        - Game Actions
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - playerId
+                - cardId
+                - payment
+              properties:
+                playerId:
+                  type: string
+                  format: uuid
+                  description: ID of the player purchasing the card
+                cardId:
+                  type: string
+                  description: ID of the card to purchase
+                  example: "card_1_5"
+                payment:
+                  $ref: '#/components/schemas/TokenBank'
+                  description: Gems paid for the card
+            example:
+              playerId: "123e4567-e89b-12d3-a456-426614174000"
+              cardId: "card_1_5"
+              payment:
+                sapphire: 4
+      responses:
+        '200':
+          description: Card purchased successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '400':
+          description: Cannot afford card or invalid action
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/games/{gameId}/actions/reserve-card:
+    post:
+      summary: Reserve a development card
+      description: |
+        Player reserves a development card for later purchase and receives a gold token.
+        Players can only reserve up to 3 cards.
+      tags:
+        - Game Actions
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - playerId
+                - cardId
+              properties:
+                playerId:
+                  type: string
+                  format: uuid
+                  description: ID of the player reserving the card
+                cardId:
+                  type: string
+                  description: ID of the card to reserve
+                  example: "card_2_3"
+            example:
+              playerId: "123e4567-e89b-12d3-a456-426614174000"
+              cardId: "card_2_3"
+      responses:
+        '200':
+          description: Card reserved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '400':
+          description: Cannot reserve card (already have 3 reserved)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Game:
+      type: object
+      description: Complete game state
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique game identifier
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        players:
+          type: array
+          items:
+            $ref: '#/components/schemas/Player'
+          description: List of players in the game
+          minItems: 1
+          maxItems: 4
+        currentPlayerIndex:
+          type: integer
+          description: Index of the current player's turn
+          minimum: 0
+          maximum: 3
+          example: 0
+        state:
+          $ref: '#/components/schemas/GameState'
+        board:
+          $ref: '#/components/schemas/GameBoard'
+        winner:
+          $ref: '#/components/schemas/Player'
+          description: Winner of the game (only present when game is finished)
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          description: When the game was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the game was last updated
+
+    Player:
+      type: object
+      description: Player information and state
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique player identifier
+        name:
+          type: string
+          description: Player's display name
+          example: "Alice"
+        tokens:
+          $ref: '#/components/schemas/TokenBank'
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
+          description: Development cards owned by the player
+        reservedCards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
+          description: Cards reserved by the player (max 3)
+          maxItems: 3
+        nobles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Noble'
+          description: Noble tiles earned by the player
+        prestige:
+          type: integer
+          description: Total prestige points earned
+          minimum: 0
+          example: 7
+
+    GameState:
+      type: string
+      enum:
+        - waiting_for_players
+        - in_progress
+        - finished
+      description: Current state of the game
+      example: "in_progress"
+
+    GameBoard:
+      type: object
+      description: Current game board state
+      properties:
+        availableCards:
+          type: object
+          description: Cards currently available for purchase
+          properties:
+            tier1:
+              type: array
+              items:
+                $ref: '#/components/schemas/Card'
+              maxItems: 4
+            tier2:
+              type: array
+              items:
+                $ref: '#/components/schemas/Card'
+              maxItems: 4
+            tier3:
+              type: array
+              items:
+                $ref: '#/components/schemas/Card'
+              maxItems: 4
+        cardDecks:
+          type: object
+          description: Remaining cards in each tier deck
+          properties:
+            tier1:
+              type: array
+              items:
+                $ref: '#/components/schemas/Card'
+            tier2:
+              type: array
+              items:
+                $ref: '#/components/schemas/Card'
+            tier3:
+              type: array
+              items:
+                $ref: '#/components/schemas/Card'
+        nobles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Noble'
+          description: Noble tiles available for visiting
+          maxItems: 5
+        tokens:
+          $ref: '#/components/schemas/TokenBank'
+          description: Gem tokens available in the bank
+
+    Card:
+      type: object
+      description: Development card
+      properties:
+        id:
+          type: string
+          description: Unique card identifier
+          example: "card_1_5"
+        tier:
+          type: integer
+          enum: [1, 2, 3]
+          description: Card tier (difficulty level)
+        prestige:
+          type: integer
+          description: Prestige points awarded
+          minimum: 0
+          example: 1
+        gemBonus:
+          $ref: '#/components/schemas/GemType'
+          description: Permanent gem bonus provided by this card
+        cost:
+          type: object
+          description: Gem cost to purchase the card
+          properties:
+            diamond:
+              type: integer
+              minimum: 0
+            sapphire:
+              type: integer
+              minimum: 0
+            emerald:
+              type: integer
+              minimum: 0
+            ruby:
+              type: integer
+              minimum: 0
+            onyx:
+              type: integer
+              minimum: 0
+          example:
+            sapphire: 4
+
+    Noble:
+      type: object
+      description: Noble tile
+      properties:
+        id:
+          type: string
+          description: Unique noble identifier
+          example: "noble_1"
+        prestige:
+          type: integer
+          description: Prestige points awarded
+          example: 3
+        requirements:
+          type: object
+          description: Gem bonus requirements to attract this noble
+          properties:
+            diamond:
+              type: integer
+              minimum: 0
+            sapphire:
+              type: integer
+              minimum: 0
+            emerald:
+              type: integer
+              minimum: 0
+            ruby:
+              type: integer
+              minimum: 0
+            onyx:
+              type: integer
+              minimum: 0
+          example:
+            diamond: 4
+            sapphire: 4
+
+    TokenBank:
+      type: object
+      description: Collection of gem tokens
+      properties:
+        diamond:
+          type: integer
+          minimum: 0
+          description: Number of diamond tokens
+        sapphire:
+          type: integer
+          minimum: 0
+          description: Number of sapphire tokens
+        emerald:
+          type: integer
+          minimum: 0
+          description: Number of emerald tokens
+        ruby:
+          type: integer
+          minimum: 0
+          description: Number of ruby tokens
+        onyx:
+          type: integer
+          minimum: 0
+          description: Number of onyx tokens
+        gold:
+          type: integer
+          minimum: 0
+          description: Number of gold tokens (wildcards)
+      example:
+        diamond: 2
+        sapphire: 1
+        emerald: 0
+        ruby: 3
+        onyx: 1
+        gold: 1
+
+    TokenSelection:
+      type: object
+      description: Tokens being selected for taking (subset of TokenBank)
+      properties:
+        diamond:
+          type: integer
+          minimum: 0
+          maximum: 2
+        sapphire:
+          type: integer
+          minimum: 0
+          maximum: 2
+        emerald:
+          type: integer
+          minimum: 0
+          maximum: 2
+        ruby:
+          type: integer
+          minimum: 0
+          maximum: 2
+        onyx:
+          type: integer
+          minimum: 0
+          maximum: 2
+        gold:
+          type: integer
+          minimum: 0
+          maximum: 2
+      example:
+        diamond: 1
+        sapphire: 1
+        emerald: 1
+
+    GemType:
+      type: string
+      enum:
+        - diamond
+        - sapphire
+        - emerald
+        - ruby
+        - onyx
+        - gold
+      description: Type of gem
+      example: "sapphire"
+
+    Error:
+      type: object
+      description: Error response
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Game not found"
+      required:
+        - error
+
+tags:
+  - name: System
+    description: System health and monitoring endpoints
+  - name: Game Management
+    description: Game creation, joining, and basic management
+  - name: Game Actions
+    description: In-game player actions and moves
+
+externalDocs:
+  description: Splendor Game Rules
+  url: https://www.spacecowboys.fr/splendor

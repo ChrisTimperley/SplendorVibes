@@ -14,7 +14,10 @@
     "test": "npm run server:test && npm run client:test",
     "server:test": "cd server && npm test",
     "client:test": "cd client && npm test",
-    "install:all": "npm install && cd server && npm install && cd ../client && npm install"
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "docs": "./open-docs.sh",
+    "docs:build": "echo 'API docs are generated from OpenAPI spec'",
+    "docs:serve": "echo 'Docs served at http://localhost:3001/docs/index.html when server is running'"
   },
   "keywords": ["board-game", "splendor", "web-game", "multiplayer"],
   "author": "",
