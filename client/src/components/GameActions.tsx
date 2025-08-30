@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
+import { borderRadius } from '../theme';
 
 interface GameActionsProps {
   selectedTokens: any;
@@ -56,15 +57,16 @@ const GameActions: React.FC<GameActionsProps> = ({ selectedTokens, onAction, isC
       <Box
         sx={{
           position: 'fixed',
-          bottom: 20,
+          bottom: 3,
           left: '50%',
           transform: 'translateX(-50%)',
           display: 'flex',
           gap: 2,
           bgcolor: 'background.paper',
-          p: 2,
-          borderRadius: 2,
-          boxShadow: 3
+          p: 3,
+          borderRadius: `${borderRadius.xl}px`,
+          boxShadow: '0 8px 32px rgba(44, 24, 16, 0.15), 0 4px 16px rgba(44, 24, 16, 0.1)',
+          border: '1px solid rgba(232, 213, 183, 0.3)'
         }}
       >
         <Button
@@ -72,23 +74,56 @@ const GameActions: React.FC<GameActionsProps> = ({ selectedTokens, onAction, isC
           onClick={() => handleAction('take-tokens', { tokens: selectedTokens })}
           disabled={!canTakeTokens()}
           sx={{
-            bgcolor: isCurrentPlayerTurn ? '#1976d2' : '#9e9e9e',
-            '&:hover': { bgcolor: isCurrentPlayerTurn ? '#1565c0' : '#9e9e9e' },
-            '&:disabled': { bgcolor: '#e0e0e0', color: '#9e9e9e' }
+            minWidth: 180,
+            height: 48,
+            fontSize: '0.95rem',
+            fontWeight: 600,
+            ...(isCurrentPlayerTurn ? {} : {
+              bgcolor: 'rgba(158, 158, 158, 0.3)',
+              color: 'text.secondary',
+              '&:hover': {
+                bgcolor: 'rgba(158, 158, 158, 0.3)'
+              }
+            })
           }}
         >
           {!isCurrentPlayerTurn ? 'WAIT FOR YOUR TURN' : 'TAKE TOKENS'}
         </Button>
       </Box>
 
-      <Dialog open={confirmDialog.open} onClose={handleCancel}>
-        <DialogTitle>Confirm Action</DialogTitle>
-        <DialogContent>
-          <Typography>{getConfirmationMessage()}</Typography>
+      <Dialog
+        open={confirmDialog.open}
+        onClose={handleCancel}
+        PaperProps={{
+          sx: {
+            borderRadius: `${borderRadius.xl}px`,
+            p: 1.5
+          }
+        }}
+      >
+        <DialogTitle sx={{ fontFamily: '"Cinzel", serif', fontSize: '1.25rem' }}>
+          Confirm Action
+        </DialogTitle>
+        <DialogContent sx={{ pt: 1.5 }}>
+          <Typography sx={{ fontSize: '1.1rem', lineHeight: 1.5 }}>
+            {getConfirmationMessage()}
+          </Typography>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancel}>CANCEL</Button>
-          <Button onClick={handleConfirm} variant="contained">CONFIRM</Button>
+        <DialogActions sx={{ gap: 1.5, p: 2 }}>
+          <Button
+            onClick={handleCancel}
+            variant="outlined"
+            sx={{ minWidth: 100 }}
+          >
+            CANCEL
+          </Button>
+          <Button
+            onClick={handleConfirm}
+            variant="contained"
+            sx={{ minWidth: 100 }}
+          >
+            CONFIRM
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

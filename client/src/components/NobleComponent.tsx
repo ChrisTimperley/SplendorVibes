@@ -1,6 +1,7 @@
 import React from 'react';
 import { Paper, Typography, Box } from '@mui/material';
 import { Noble, GemType } from '../../../shared/types/game';
+import { borderRadius, colors } from '../theme';
 import { gemColors } from '../constants/gemColors';
 
 interface NobleComponentProps {
@@ -10,38 +11,43 @@ interface NobleComponentProps {
 const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
   return (
     <Paper
-      elevation={3}
+      elevation={0}
       sx={{
-        width: 160,
-        height: 120,
-        p: 1.5,
+        width: 180,
+        height: 140,
+        p: 2,
         display: 'flex',
         flexDirection: 'column',
-        background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-        border: '2px solid #FF8C00',
-        borderRadius: 2,
+        background: `linear-gradient(135deg, ${colors.secondary.main} 0%, ${colors.secondary.light} 100%)`,
+        border: `2px solid ${colors.secondary.dark}`,
+        borderRadius: `${borderRadius.xl}px`,
         position: 'relative',
-        boxShadow: '0 4px 12px rgba(255, 165, 0, 0.3)'
+        boxShadow: '0 6px 20px rgba(218, 165, 32, 0.25), 0 3px 8px rgba(218, 165, 32, 0.15)',
+        '&:hover': {
+          transform: 'translateY(-2px)',
+          boxShadow: '0 8px 28px rgba(218, 165, 32, 0.3), 0 4px 12px rgba(218, 165, 32, 0.2)',
+          transition: 'all 0.3s ease'
+        }
       }}
     >
       {/* Prestige Points */}
       <Box
         sx={{
           position: 'absolute',
-          top: -8,
-          right: -8,
-          width: 28,
-          height: 28,
+          top: -1,
+          right: -1,
+          width: 32,
+          height: 32,
           borderRadius: '50%',
-          bgcolor: '#8B4513',
-          border: '2px solid #A0522D',
+          background: `linear-gradient(135deg, ${colors.primary.main} 0%, ${colors.primary.dark} 100%)`,
+          border: `2px solid ${colors.primary.dark}`,
           color: 'white',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '0.8rem',
+          fontSize: '0.9rem',
           fontWeight: 'bold',
-          boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+          boxShadow: '0 3px 8px rgba(139, 69, 19, 0.4)',
           zIndex: 10
         }}
       >
@@ -50,14 +56,15 @@ const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
 
       {/* Noble Name */}
       <Typography
-        variant="h6"
+        variant="h5"
         sx={{
-          fontSize: '0.8rem',
-          fontWeight: 'bold',
-          color: '#1a1a1a',
+          fontSize: '0.95rem',
+          fontWeight: 600,
+          color: 'black',
           textAlign: 'center',
-          mb: 1,
-          lineHeight: 1.2
+          mb: 1.5,
+          lineHeight: 1.3,
+          fontFamily: '"Cinzel", serif'
         }}
       >
         {noble.name}
@@ -65,40 +72,47 @@ const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
 
       {/* Requirements */}
       <Typography
-        variant="caption"
+        variant="body2"
         sx={{
-          fontSize: '0.65rem',
+          fontSize: '0.75rem',
           fontWeight: 600,
-          color: '#333',
+          color: colors.primary.dark,
           textAlign: 'center',
-          mb: 0.5,
+          mb: 1,
           textTransform: 'uppercase',
-          letterSpacing: 0.5
+          letterSpacing: 0.5,
+          fontFamily: '"Inter", sans-serif'
         }}
       >
         Requirements
       </Typography>
 
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, justifyContent: 'center' }}>
+      <Box sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 0.5,
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}>
         {Object.entries(noble.requirements).map(([gem, count]) => (
           <Box
             key={gem}
             sx={{
               display: 'flex',
               alignItems: 'center',
-              gap: 0.3,
-              bgcolor: gemColors[gem as GemType] || '#ccc',
+              gap: 0.5,
+              bgcolor: gemColors[gem as GemType] || colors.divider,
               color: gem === 'diamond' ? '#333' :
                      gem === 'gold' ? '#000' :
                      gem === 'onyx' ? '#fff' : 'white',
-              borderRadius: 1,
-              px: 0.5,
-              py: 0.2,
-              fontSize: '0.65rem',
+              borderRadius: `${borderRadius.sm}px`,
+              px: 1,
+              py: 0.5,
+              fontSize: '0.75rem',
               fontWeight: 'bold',
-              minHeight: 16,
-              boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-              background: `linear-gradient(90deg, ${gemColors[gem as GemType] || '#ccc'} 0%, ${gemColors[gem as GemType] || '#ccc'}dd 100%)`
+              minHeight: 20,
+              boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
+              background: `linear-gradient(90deg, ${gemColors[gem as GemType] || colors.divider} 0%, ${gemColors[gem as GemType] || colors.divider}dd 100%)`
             }}
           >
             <Box
@@ -106,8 +120,8 @@ const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
                 width: 8,
                 height: 8,
                 borderRadius: '50%',
-                bgcolor: 'rgba(255,255,255,0.4)',
-                border: '1px solid rgba(255,255,255,0.6)'
+                bgcolor: 'rgba(255,255,255,0.5)',
+                border: '1px solid rgba(255,255,255,0.7)'
               }}
             />
             {count}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Alert, Button, Chip } from '@mui/material';
 import { TokenBank as TokenBankType, GemType } from '../../../shared/types/game';
+import { borderRadius, colors } from '../theme';
 import { gemColors } from '../constants/gemColors';
 
 interface TokenBankProps {
@@ -75,7 +76,7 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
+      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
         {Object.entries(tokens).map(([gem, count]) => {
           const selected = selectedTokens[gem as keyof TokenBankType] || 0;
           return (
@@ -84,20 +85,26 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
                 onClick={() => handleTokenClick(gem as keyof TokenBankType)}
                 disabled={count === 0}
                 sx={{
-                  width: 60,
-                  height: 60,
+                  width: 64,
+                  height: 64,
                   borderRadius: '50%',
                   bgcolor: gemColors[gem as GemType],
                   color: gem === 'diamond' || gem === 'gold' ? 'black' : 'white',
                   border: gem === 'diamond' ? '2px solid #ccc' : 'none',
                   position: 'relative',
+                  boxShadow: '0 4px 12px rgba(44, 24, 16, 0.15), 0 2px 4px rgba(44, 24, 16, 0.08)',
                   '&:hover': {
                     bgcolor: gemColors[gem as GemType],
-                    opacity: 0.8
+                    opacity: 0.8,
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 6px 16px rgba(44, 24, 16, 0.2), 0 3px 6px rgba(44, 24, 16, 0.12)'
+                  },
+                  '&:disabled': {
+                    opacity: 0.3
                   }
                 }}
               >
-                <Typography variant="body2" fontWeight="bold">
+                <Typography variant="h5" fontWeight="bold">
                   {count}
                 </Typography>
                 {selected > 0 && (
@@ -106,17 +113,29 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
                     label={selected}
                     sx={{
                       position: 'absolute',
-                      top: -8,
-                      right: -8,
-                      bgcolor: 'red',
+                      top: -1,
+                      right: -1,
+                      bgcolor: colors.primary.main,
                       color: 'white',
-                      width: 20,
-                      height: 20
+                      width: 24,
+                      height: 24,
+                      fontSize: '0.75rem',
+                      fontWeight: 'bold',
+                      borderRadius: '50%'
                     }}
                   />
                 )}
               </Button>
-              <Typography variant="caption" display="block">
+              <Typography
+                variant="body2"
+                display="block"
+                sx={{
+                  mt: 1,
+                  fontWeight: 500,
+                  color: 'text.secondary',
+                  fontSize: '0.85rem'
+                }}
+              >
                 {gem.charAt(0).toUpperCase() + gem.slice(1)}
               </Typography>
             </Box>
@@ -126,15 +145,28 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
 
       {/* Error message */}
       {errorMessage && (
-        <Alert severity="error" sx={{ mt: 1 }}>
+        <Alert
+          severity="error"
+          sx={{
+            mt: 1,
+            borderRadius: `${borderRadius.lg}px`,
+            border: 'none'
+          }}
+        >
           {errorMessage}
         </Alert>
       )}
 
       {/* Selection summary */}
       {Object.keys(selectedTokens).length > 0 && !errorMessage && (
-        <Box sx={{ mt: 1, p: 1, bgcolor: 'success.light', borderRadius: 1 }}>
-          <Typography variant="body2" color="success.dark">
+        <Box sx={{
+          mt: 1,
+          p: 2,
+          bgcolor: colors.background.card,
+          borderRadius: `${borderRadius.lg}px`,
+          border: `1px solid ${colors.secondary.light}`
+        }}>
+          <Typography variant="body1" sx={{ color: colors.secondary.dark, fontWeight: 500 }}>
             Selected: {Object.entries(selectedTokens).map(([gem, count]) =>
               `${count} ${gem}`
             ).join(', ')}

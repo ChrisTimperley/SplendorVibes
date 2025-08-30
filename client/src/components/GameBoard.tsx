@@ -1,6 +1,7 @@
 import React from 'react';
 import { Paper, Typography, Box, Grid } from '@mui/material';
 import { GameBoard as GameBoardType } from '../../../shared/types/game';
+import { borderRadius, colors } from '../theme';
 import CardComponent from './CardComponent';
 import NobleComponent from './NobleComponent';
 import TokenBank from './TokenBank';
@@ -19,13 +20,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
   onTokenSelectionChange
 }) => {
   return (
-    <Box>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       {/* Nobles */}
-      <Paper elevation={2} sx={{ p: 2, mb: 2 }}>
-        <Typography variant="h6" gutterBottom>
+      <Paper elevation={0} sx={{ p: 3 }}>
+        <Typography variant="h2" gutterBottom sx={{ mb: 2 }}>
           Nobles
         </Typography>
-        <Grid container spacing={1}>
+        <Grid container spacing={2}>
           {board.nobles.map((noble) => (
             <Grid item key={noble.id}>
               <NobleComponent noble={noble} />
@@ -35,14 +36,22 @@ const GameBoard: React.FC<GameBoardProps> = ({
       </Paper>
 
       {/* Cards */}
-      <Paper elevation={2} sx={{ p: 2, mb: 2 }}>
-        <Typography variant="h6" gutterBottom>
+      <Paper elevation={0} sx={{ p: 3 }}>
+        <Typography variant="h2" gutterBottom sx={{ mb: 3 }}>
           Development Cards
         </Typography>
 
         {[3, 2, 1].map((tier) => (
-          <Box key={tier} sx={{ mb: 3 }}>
-            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
+          <Box key={tier} sx={{ mb: 4 }}>
+            <Typography
+              variant="h3"
+              gutterBottom
+              sx={{
+                fontWeight: 600,
+                mb: 2,
+                color: 'primary.main'
+              }}
+            >
               Tier {tier}
             </Typography>
             <Grid container spacing={2}>
@@ -57,7 +66,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
               {/* Deck indicator */}
               <Grid item>
                 <Paper
-                  elevation={1}
+                  elevation={0}
                   sx={{
                     width: 140,
                     height: 200,
@@ -65,15 +74,29 @@ const GameBoard: React.FC<GameBoardProps> = ({
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    bgcolor: 'grey.300',
-                    border: '3px solid #ccc',
-                    borderStyle: 'dashed'
+                    bgcolor: colors.background.card,
+                    border: `2px dashed ${colors.divider}`,
+                    borderRadius: `${borderRadius.xl}px`
                   }}
                 >
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  <Typography
+                    variant="h2"
+                    sx={{
+                      fontWeight: 'bold',
+                      mb: 1,
+                      color: 'text.secondary'
+                    }}
+                  >
                     {board.cardDecks[`tier${tier}` as keyof typeof board.cardDecks].length}
                   </Typography>
-                  <Typography variant="caption" align="center">
+                  <Typography
+                    variant="body2"
+                    align="center"
+                    sx={{
+                      color: 'text.secondary',
+                      fontWeight: 500
+                    }}
+                  >
                     cards left
                   </Typography>
                 </Paper>
@@ -84,8 +107,8 @@ const GameBoard: React.FC<GameBoardProps> = ({
       </Paper>
 
       {/* Token Bank */}
-      <Paper elevation={2} sx={{ p: 2 }}>
-        <Typography variant="h6" gutterBottom>
+      <Paper elevation={0} sx={{ p: 3 }}>
+        <Typography variant="h2" gutterBottom sx={{ mb: 2 }}>
           Token Bank
         </Typography>
         <TokenBank

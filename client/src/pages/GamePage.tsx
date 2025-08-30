@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Grid, Typography, Paper } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import { Game } from '../../../shared/types/game';
 import { gameService } from '../services/gameService';
 import { socketService } from '../services/socketService';
@@ -93,8 +93,8 @@ const GamePage: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Grid container spacing={2}>
+    <Box sx={{ p: 3 }}>
+      <Grid container spacing={3}>
         <Grid item xs={12} lg={8}>
           <GameBoard
             board={game.board}
@@ -105,7 +105,7 @@ const GamePage: React.FC = () => {
         </Grid>
 
         <Grid item xs={12} lg={4}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             {game.players.map((player, index) => (
               <PlayerArea
                 key={player.id}

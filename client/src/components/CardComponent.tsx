@@ -1,6 +1,7 @@
 import React from 'react';
 import { Paper, Typography, Box, Button } from '@mui/material';
 import { Card, GemType } from '../../../shared/types/game';
+import { borderRadius, colors } from '../theme';
 import { gemColors } from '../constants/gemColors';
 
 interface CardComponentProps {
@@ -16,26 +17,28 @@ const CardComponent: React.FC<CardComponentProps> = ({ card, onAction }) => {
   const handleReserve = () => {
     onAction('reserve-card', { cardId: card.id });
   };
+
   return (
     <Paper
-      elevation={3}
+      elevation={0}
       sx={{
         width: 140,
         height: 200,
-        p: 1.2,
+        p: 1.5,
         display: 'flex',
         flexDirection: 'column',
-        border: `3px solid ${gemColors[card.gemBonus] || '#ccc'}`,
-        borderRadius: 2,
+        border: `2px solid ${gemColors[card.gemBonus] || colors.divider}`,
+        borderRadius: `${borderRadius.xl}px`,
         position: 'relative',
         cursor: 'pointer',
-        background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+        background: `linear-gradient(135deg, ${colors.background.paper} 0%, ${colors.background.card} 100%)`,
         overflow: 'hidden',
+        boxShadow: '0 4px 12px rgba(44, 24, 16, 0.1), 0 2px 4px rgba(44, 24, 16, 0.06)',
         '&:hover': {
-          elevation: 6,
-          transform: 'translateY(-3px)',
+          transform: 'translateY(-4px)',
           transition: 'all 0.3s ease',
-          boxShadow: '0 8px 25px rgba(0,0,0,0.15)'
+          boxShadow: '0 12px 32px rgba(44, 24, 16, 0.15), 0 6px 12px rgba(44, 24, 16, 0.1)',
+          borderColor: gemColors[card.gemBonus] || colors.primary.main
         }
       }}
     >
@@ -44,20 +47,20 @@ const CardComponent: React.FC<CardComponentProps> = ({ card, onAction }) => {
         <Box
           sx={{
             position: 'absolute',
-            top: 6,
-            right: 6,
-            width: 28,
-            height: 28,
+            top: 1,
+            right: 1,
+            width: 32,
+            height: 32,
             borderRadius: '50%',
-            bgcolor: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-            border: '2px solid #FF8C00',
-            color: '#1a1a1a',
+            background: `linear-gradient(135deg, ${colors.secondary.main} 0%, ${colors.secondary.dark} 100%)`,
+            border: `2px solid ${colors.secondary.dark}`,
+            color: 'black',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '0.8rem',
+            fontSize: '0.85rem',
             fontWeight: 'bold',
-            boxShadow: '0 2px 8px rgba(255, 165, 0, 0.4)',
+            boxShadow: '0 2px 8px rgba(218, 165, 32, 0.3)',
             zIndex: 10
           }}
         >
@@ -68,24 +71,25 @@ const CardComponent: React.FC<CardComponentProps> = ({ card, onAction }) => {
       {/* Gem Bonus */}
       <Box
         sx={{
-          width: 32,
-          height: 32,
+          width: 36,
+          height: 36,
           borderRadius: '50%',
-          bgcolor: gemColors[card.gemBonus] || '#ccc',
+          bgcolor: gemColors[card.gemBonus] || colors.divider,
           border: card.gemBonus === GemType.DIAMOND ? '2px solid #999' :
-                 card.gemBonus === GemType.ONYX ? '2px solid #555' : '2px solid rgba(255,255,255,0.3)',
+                 card.gemBonus === GemType.ONYX ? '2px solid #555' :
+                 `2px solid rgba(255,255,255,0.2)`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           color: card.gemBonus === GemType.DIAMOND ? '#333' :
                  card.gemBonus === GemType.GOLD ? '#000' :
                  card.gemBonus === GemType.ONYX ? '#fff' : 'white',
-          fontSize: '0.85rem',
+          fontSize: '0.9rem',
           fontWeight: 'bold',
-          mb: 1,
+          mb: 1.5,
           alignSelf: 'center',
-          boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-          background: `linear-gradient(135deg, ${gemColors[card.gemBonus] || '#ccc'} 0%, ${gemColors[card.gemBonus] || '#ccc'}cc 100%)`
+          boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+          background: `linear-gradient(135deg, ${gemColors[card.gemBonus] || colors.divider} 0%, ${gemColors[card.gemBonus] || colors.divider}dd 100%)`
         }}
       >
         {card.gemBonus.charAt(0).toUpperCase()}
@@ -93,19 +97,20 @@ const CardComponent: React.FC<CardComponentProps> = ({ card, onAction }) => {
 
       {/* Cost */}
       <Typography
-        variant="caption"
+        variant="body2"
         sx={{
-          mb: 0.5,
+          mb: 1,
           fontWeight: 600,
-          fontSize: '0.65rem',
+          fontSize: '0.7rem',
           color: 'text.primary',
           textTransform: 'uppercase',
-          letterSpacing: 0.5
+          letterSpacing: 0.5,
+          fontFamily: '"Inter", sans-serif'
         }}
       >
         Cost
       </Typography>
-      <Box sx={{ mb: 1, flex: 1, display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+      <Box sx={{ mb: 1.5, flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
         {Object.entries(card.cost)
           .filter(([_, cost]) => cost > 0)
           .map(([gem, cost]) => (
@@ -115,30 +120,30 @@ const CardComponent: React.FC<CardComponentProps> = ({ card, onAction }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                bgcolor: gemColors[gem as GemType] || '#ccc',
+                bgcolor: gemColors[gem as GemType] || colors.divider,
                 color: gem === 'diamond' ? '#333' :
                        gem === 'gold' ? '#000' :
                        gem === 'onyx' ? '#fff' : 'white',
-                borderRadius: 1,
-                px: 0.6,
-                py: 0.2,
-                fontSize: '0.65rem',
+                borderRadius: `${borderRadius.sm}px`,
+                px: 1,
+                py: 2,
+                fontSize: '0.7rem',
                 fontWeight: 600,
                 minHeight: 18,
-                boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                background: `linear-gradient(90deg, ${gemColors[gem as GemType] || '#ccc'} 0%, ${gemColors[gem as GemType] || '#ccc'}dd 100%)`
+                boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
+                background: `linear-gradient(90deg, ${gemColors[gem as GemType] || colors.divider} 0%, ${gemColors[gem as GemType] || colors.divider}dd 100%)`
               }}
             >
               <Box
                 sx={{
-                  width: 10,
-                  height: 10,
+                  width: 8,
+                  height: 8,
                   borderRadius: '50%',
-                  bgcolor: 'rgba(255,255,255,0.4)',
-                  border: '1px solid rgba(255,255,255,0.6)'
+                  bgcolor: 'rgba(255,255,255,0.5)',
+                  border: '1px solid rgba(255,255,255,0.7)'
                 }}
               />
-              <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.65rem' }}>
+              <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.7rem' }}>
                 {cost}
               </Typography>
             </Box>
@@ -150,12 +155,13 @@ const CardComponent: React.FC<CardComponentProps> = ({ card, onAction }) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              bgcolor: 'success.light',
-              color: 'success.dark',
-              borderRadius: 1,
-              py: 0.3,
+              bgcolor: colors.secondary.light,
+              color: colors.secondary.dark,
+              borderRadius: `${borderRadius.sm}px`,
+              py: 0.5,
               fontStyle: 'italic',
-              fontSize: '0.65rem'
+              fontSize: '0.7rem',
+              fontWeight: 500
             }}
           >
             Free
@@ -164,24 +170,20 @@ const CardComponent: React.FC<CardComponentProps> = ({ card, onAction }) => {
       </Box>
 
       {/* Actions */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.4, mt: 'auto' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mt: 'auto' }}>
         <Button
           size="small"
           variant="contained"
           onClick={handlePurchase}
           sx={{
-            fontSize: '0.6rem',
-            py: 0.4,
-            minHeight: 24,
+            fontSize: '0.65rem',
+            py: 0.5,
+            minHeight: 28,
             fontWeight: 600,
-            borderRadius: 1.5,
-            background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
-            boxShadow: '0 2px 6px rgba(25, 118, 210, 0.3)',
+            borderRadius: `${borderRadius.md}px`,
             textTransform: 'uppercase',
             letterSpacing: 0.5,
             '&:hover': {
-              background: 'linear-gradient(135deg, #1565c0 0%, #0d47a1 100%)',
-              boxShadow: '0 4px 12px rgba(25, 118, 210, 0.4)',
               transform: 'translateY(-1px)'
             }
           }}
@@ -193,17 +195,16 @@ const CardComponent: React.FC<CardComponentProps> = ({ card, onAction }) => {
           variant="outlined"
           onClick={handleReserve}
           sx={{
-            fontSize: '0.6rem',
-            py: 0.4,
-            minHeight: 24,
+            fontSize: '0.65rem',
+            py: 0.5,
+            minHeight: 28,
             fontWeight: 600,
-            borderRadius: 1.5,
+            borderRadius: `${borderRadius.md}px`,
             borderWidth: 2,
             textTransform: 'uppercase',
             letterSpacing: 0.5,
             '&:hover': {
               borderWidth: 2,
-              boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
               transform: 'translateY(-1px)'
             }
           }}

@@ -50,13 +50,16 @@ const HomePage: React.FC = () => {
 
   return (
     <Container maxWidth="md">
-      <Box sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h3" component="h1" gutterBottom align="center">
+      <Box sx={{ mt: 3, mb: 3 }}>
+        <Typography variant="h1" component="h1" gutterBottom align="center" sx={{ mb: 2 }}>
           Welcome to Splendor
         </Typography>
+        <Typography variant="body1" align="center" sx={{ mb: 4, color: 'text.secondary', fontSize: '1.1rem' }}>
+          A Renaissance merchant adventure awaits
+        </Typography>
 
-        <Paper elevation={3} sx={{ p: 4, mt: 4 }}>
-          <Typography variant="h5" gutterBottom>
+        <Paper elevation={0} sx={{ p: 4, mb: 3 }}>
+          <Typography variant="h3" gutterBottom sx={{ mb: 3 }}>
             Enter Your Name
           </Typography>
 
@@ -65,11 +68,11 @@ const HomePage: React.FC = () => {
             label="Player Name"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
-            margin="normal"
+            sx={{ mb: 3 }}
             variant="outlined"
           />
 
-          <Grid container spacing={2} sx={{ mt: 2 }}>
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Button
                 fullWidth
@@ -77,6 +80,7 @@ const HomePage: React.FC = () => {
                 size="large"
                 onClick={handleCreateGame}
                 disabled={!playerName.trim() || loading}
+                sx={{ height: 56 }}
               >
                 Create New Game
               </Button>
@@ -91,6 +95,7 @@ const HomePage: React.FC = () => {
                   const gameId = prompt('Enter Game ID:');
                   if (gameId) handleJoinGame(gameId);
                 }}
+                sx={{ height: 56 }}
               >
                 Join Game
               </Button>
@@ -98,31 +103,38 @@ const HomePage: React.FC = () => {
           </Grid>
         </Paper>
 
-        <Paper elevation={2} sx={{ p: 3, mt: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            How to Play Splendor
+        <Paper elevation={0} sx={{ p: 4 }}>
+          <Typography variant="h3" gutterBottom sx={{ mb: 2 }}>
+            How to Play
           </Typography>
-          <Typography variant="body1" paragraph>
+          <Typography variant="body1" paragraph sx={{ mb: 3, fontSize: '1.1rem', lineHeight: 1.6 }}>
             Splendor is a strategic card game where you play as Renaissance merchants trying to build
             the most prestigious jewelry business. Collect gems, purchase development cards, and
             attract nobles to earn prestige points.
           </Typography>
 
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h4" gutterBottom sx={{ mb: 1 }}>
             Objective
           </Typography>
-          <Typography variant="body1" paragraph>
+          <Typography variant="body1" paragraph sx={{ mb: 3, fontSize: '1.1rem', lineHeight: 1.6 }}>
             Be the first player to reach 15 prestige points to win the game!
           </Typography>
 
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h4" gutterBottom sx={{ mb: 1 }}>
             Game Actions
           </Typography>
-          <ul>
+          <Box component="ul" sx={{
+            pl: 3,
+            '& li': {
+              mb: 0.5,
+              fontSize: '1.1rem',
+              lineHeight: 1.6
+            }
+          }}>
             <li><strong>Take Gems:</strong> Take up to 3 different gems or 2 of the same type (if 4+ available)</li>
             <li><strong>Buy a Card:</strong> Purchase development cards using gems to gain permanent bonuses</li>
             <li><strong>Reserve a Card:</strong> Set aside a card for later purchase and gain a gold token</li>
-          </ul>
+          </Box>
         </Paper>
       </Box>
     </Container>
