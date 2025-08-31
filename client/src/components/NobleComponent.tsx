@@ -37,8 +37,26 @@ const SquareCostPip: React.FC<{ gem: GemType; count: number }> = ({ gem, count }
 };
 
 const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
-  // Get portrait URL (placeholder for now)
-  const portraitUrl = `/noble-portraits/${noble.name.toLowerCase().replace(/\s+/g, '-')}.jpg`;
+  // Map noble IDs to their corresponding artwork files
+  // To add new artwork: place noble_X.png files in public/noble-art/ and add mapping below
+  const getNobleArtUrl = (nobleId: string): string | null => {
+    const artMapping: Record<string, string> = {
+      'noble_1': '/noble-art/noble_1.png', // Catherine de' Medici
+      // Add more mappings as artwork becomes available:
+      // 'noble_2': '/noble-art/noble_2.png', // Elisabeth of Austria
+      // 'noble_3': '/noble-art/noble_3.png', // Isabella I of Castile
+      // 'noble_4': '/noble-art/noble_4.png', // Niccolò Machiavelli
+      // 'noble_5': '/noble-art/noble_5.png', // Suleiman the Magnificent
+      // 'noble_6': '/noble-art/noble_6.png', // Anne of Brittany
+      // 'noble_7': '/noble-art/noble_7.png', // Charles V
+      // 'noble_8': '/noble-art/noble_8.png', // Francis I of France
+      // 'noble_9': '/noble-art/noble_9.png', // Henry VIII
+      // 'noble_10': '/noble-art/noble_10.png', // Mary Stuart
+    };
+    return artMapping[nobleId] || null;
+  };
+
+  const portraitUrl = getNobleArtUrl(noble.id);
 
   return (
     <Paper
@@ -77,17 +95,19 @@ const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
           right: 0,
           bottom: 0,
           background: `linear-gradient(135deg, #8b4513 0%, #654321 100%)`, // Fallback
-          backgroundImage: `url(${portraitUrl})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          filter: 'saturate(1.1) contrast(1.1)',
+          ...(portraitUrl && {
+            backgroundImage: `url(${portraitUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'saturate(1.1) contrast(1.1)',
+          }),
           // Fallback placeholder pattern
           '&::before': {
             content: '""',
             position: 'absolute',
             inset: 0,
-            background: `linear-gradient(135deg, rgba(139, 69, 19, 0.3) 0%, rgba(101, 67, 33, 0.3) 100%)`,
-            backgroundImage: `radial-gradient(circle at center, rgba(245, 245, 220, 0.2) 0%, transparent 70%)`,
+            background: !portraitUrl ? `linear-gradient(135deg, rgba(139, 69, 19, 0.3) 0%, rgba(101, 67, 33, 0.3) 100%)` : 'none',
+            backgroundImage: !portraitUrl ? `radial-gradient(circle at center, rgba(245, 245, 220, 0.2) 0%, transparent 70%)` : 'none',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
@@ -95,32 +115,34 @@ const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
         }}
       />
 
-      {/* Placeholder portrait icon when image fails to load */}
-      <Box
-        sx={{
-          position: 'absolute',
-          right: '15%', // Better positioning in the portrait area
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: 70,
-          height: 70,
-          borderRadius: '50%',
-          background: 'rgba(139, 69, 19, 0.8)',
-          border: '3px solid rgba(245, 245, 220, 0.6)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#f5f5dc',
-          fontSize: '1.8rem',
-          fontFamily: '"Cinzel", serif',
-          fontWeight: 'bold',
-          textShadow: '0 1px 2px rgba(0,0,0,0.5)',
-          zIndex: 1,
-          boxShadow: '0 4px 8px rgba(0,0,0,0.3)'
-        }}
-      >
-        {noble.name.charAt(0)}
-      </Box>
+      {/* Placeholder portrait icon when image fails to load or no artwork available */}
+      {!portraitUrl && (
+        <Box
+          sx={{
+            position: 'absolute',
+            right: '15%', // Better positioning in the portrait area
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: 70,
+            height: 70,
+            borderRadius: '50%',
+            background: 'rgba(139, 69, 19, 0.8)',
+            border: '3px solid rgba(245, 245, 220, 0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#f5f5dc',
+            fontSize: '1.8rem',
+            fontFamily: '"Cinzel", serif',
+            fontWeight: 'bold',
+            textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+            zIndex: 1,
+            boxShadow: '0 4px 8px rgba(0,0,0,0.3)'
+          }}
+        >
+          {noble.name.charAt(0)}
+        </Box>
+      )}
 
       {/* Vertical frosted panel on the left */}
       <Box

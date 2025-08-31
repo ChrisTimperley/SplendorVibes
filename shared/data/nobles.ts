@@ -1,5 +1,14 @@
 import { Noble, GemType } from '../types/game';
 
+/**
+ * Noble data for the Splendor game
+ *
+ * Noble artwork integration:
+ * - Place noble artwork files in client/public/noble-art/
+ * - Name files as noble_X.png (where X is the noble number)
+ * - Update the artMapping in NobleComponent.tsx to include new files
+ * - Current artwork available: noble_1.png
+ */
 export const nobleData: Noble[] = [
   {
     id: 'noble_1',
