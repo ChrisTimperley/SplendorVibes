@@ -153,12 +153,12 @@ const GamePage: React.FC = () => {
               variant="subtitle1"
               sx={{
                 fontWeight: 600,
-                color: index === 0 ? 'gold' : 'white',
+                color: player.id === currentPlayer ? 'gold' : 'white',
                 mb: 1,
                 fontSize: '0.95rem'
               }}
             >
-              {index === 0 ? 'You: ' : ''}{player.name}
+              {player.id === currentPlayer ? 'You: ' : ''}{player.name}
               {game.currentPlayerIndex === index ? ' (Current Turn)' : ''}
             </Typography>
 
@@ -173,7 +173,9 @@ const GamePage: React.FC = () => {
         <GameActions
           selectedTokens={selectedTokens}
           onAction={handleGameAction}
-          isCurrentPlayerTurn={game.currentPlayerIndex === 0}
+          isCurrentPlayerTurn={
+            Boolean(currentPlayer && game.players[game.currentPlayerIndex]?.id === currentPlayer)
+          }
         />
       </Box>
     </Box>
