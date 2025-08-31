@@ -7,10 +7,9 @@ import { gemColors } from '../constants/gemColors';
 interface PlayerAreaProps {
   player: Player;
   isCurrentPlayer: boolean;
-  isActivePlayer: boolean;
 }
 
-const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActivePlayer }) => {
+const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer }) => {
   const [prestigeChanged, setPrestigeChanged] = useState(false);
   const [previousPrestige, setPreviousPrestige] = useState(player.prestige);
 
@@ -28,71 +27,66 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActi
     <Paper
       elevation={0}
       sx={{
-        p: 3,
+        p: 2, // Reduced padding for compact view
         border: isCurrentPlayer
-          ? `2px solid ${colors.primary.main}`
-          : `1px solid ${colors.divider}`,
-        bgcolor: isActivePlayer
-          ? 'rgba(139, 69, 19, 0.05)'
-          : 'background.paper',
-        borderRadius: `${borderRadius.xl}px`,
+          ? `2px solid ${colors.secondary.light}` // Use gold for current player
+          : `1px solid rgba(255, 255, 255, 0.2)`, // Light border for sidebar
+        bgcolor: isCurrentPlayer
+          ? 'rgba(255, 215, 0, 0.1)' // Gold tint for current player
+          : 'rgba(255, 255, 255, 0.05)', // Subtle background for sidebar
+        borderRadius: `${borderRadius.lg}px`,
         boxShadow: isCurrentPlayer
-          ? '0 8px 24px rgba(139, 69, 19, 0.15), 0 4px 8px rgba(139, 69, 19, 0.1)'
-          : '0 2px 8px rgba(44, 24, 16, 0.08), 0 1px 2px rgba(44, 24, 16, 0.04)',
+          ? '0 4px 12px rgba(255, 215, 0, 0.2)'
+          : '0 2px 6px rgba(0, 0, 0, 0.1)',
         transition: animations.hover,
         '&:hover': {
           transform: 'translateY(-1px)',
           boxShadow: isCurrentPlayer
-            ? '0 12px 32px rgba(139, 69, 19, 0.2), 0 6px 12px rgba(139, 69, 19, 0.15)'
-            : '0 4px 16px rgba(44, 24, 16, 0.12), 0 2px 4px rgba(44, 24, 16, 0.08)',
+            ? '0 6px 16px rgba(255, 215, 0, 0.3)'
+            : '0 4px 12px rgba(0, 0, 0, 0.15)',
         }
       }}
     >
-      <Typography variant="h4" gutterBottom sx={{
-        mb: 1,
-        color: 'white',
-        fontWeight: 600,
-      }}>
-        {isActivePlayer && <strong style={{ color: colors.secondary.light }}>You: </strong>}
-        {player.name} {isCurrentPlayer && '(Current Turn)'}
-      </Typography>
-
+      {/* Compact prestige display */}
       <Typography
-        variant="h3"
+        variant="h5"
         sx={{
-          color: colors.secondary.light, // Use gold color for better contrast
-          mb: 3,
+          color: colors.secondary.light,
+          mb: 2,
           fontWeight: 600,
-          transform: prestigeChanged ? 'scale(1.15)' : 'scale(1)',
+          transform: prestigeChanged ? 'scale(1.1)' : 'scale(1)',
           transition: animations.popup,
+          fontSize: '1.2rem',
         }}
       >
         {player.prestige} Prestige Points
       </Typography>
 
       {/* Tokens */}
-      <Typography variant="h5" gutterBottom sx={{
+      <Typography variant="h6" sx={{
         mb: 1,
         color: 'white',
         fontWeight: 500,
+        fontSize: '0.9rem',
       }}>
         Tokens:
       </Typography>
-      <Box sx={{ display: 'flex', gap: 1, mb: 3, flexWrap: 'wrap' }}>
+      <Box sx={{ display: 'flex', gap: 0.5, mb: 2, flexWrap: 'wrap' }}>
         {Object.entries(player.tokens).map(([gem, count]) => (
           count > 0 && (
             <Chip
               key={gem}
-              size="medium"
+              size="small"
               label={`${count}`}
               sx={{
                 bgcolor: gemColors[gem as GemType],
                 color: gem === 'diamond' || gem === 'gold' ? 'black' : 'white',
                 border: gem === 'diamond' ? '1px solid #ccc' : 'none',
-                borderRadius: `${borderRadius.md}px`,
+                borderRadius: `${borderRadius.sm}px`,
                 fontWeight: 600,
-                minWidth: 36,
-                height: 32,
+                minWidth: 24,
+                height: 24,
+                fontSize: '0.75rem',
                 transition: animations.hover,
                 '&:hover': {
                   transform: 'scale(1.05)',
@@ -106,14 +100,15 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActi
       </Box>
 
       {/* Card Bonuses */}
-      <Typography variant="h5" gutterBottom sx={{
+      <Typography variant="h6" sx={{
         mb: 1,
         color: 'white',
         fontWeight: 500,
+        fontSize: '0.9rem',
       }}>
         Card Bonuses:
       </Typography>
-      <Box sx={{ display: 'flex', gap: 1, mb: 3, flexWrap: 'wrap' }}>
+      <Box sx={{ display: 'flex', gap: 0.5, mb: 2, flexWrap: 'wrap' }}>
         {Object.entries(
           player.cards.reduce((acc, card) => {
             acc[card.gemBonus] = (acc[card.gemBonus] || 0) + 1;
@@ -122,17 +117,18 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActi
         ).map(([gem, count]) => (
           <Chip
             key={gem}
-            size="medium"
+            size="small"
             label={`${count}`}
             variant="outlined"
             sx={{
               borderColor: gemColors[gem as GemType],
               color: gemColors[gem as GemType],
-              borderRadius: `${borderRadius.md}px`,
-              borderWidth: 2,
+              borderRadius: `${borderRadius.sm}px`,
+              borderWidth: 1.5,
               fontWeight: 600,
-              minWidth: 36,
-              height: 32,
+              minWidth: 24,
+              height: 24,
+              fontSize: '0.75rem',
               transition: animations.hover,
               '&:hover': {
                 borderColor: gemColors[gem as GemType],
@@ -148,11 +144,12 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActi
 
       {/* Reserved Cards */}
       {player.reservedCards.length > 0 && (
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="h5" gutterBottom sx={{
-            mb: 1,
+        <Box sx={{ mb: 1 }}>
+          <Typography variant="h6" sx={{
+            mb: 0.5,
             color: 'white',
             fontWeight: 500,
+            fontSize: '0.9rem',
           }}>
             Reserved Cards: {player.reservedCards.length}
           </Typography>
@@ -162,25 +159,27 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActi
       {/* Nobles */}
       {player.nobles.length > 0 && (
         <Box>
-          <Typography variant="h5" gutterBottom sx={{
+          <Typography variant="h6" sx={{
             mb: 1,
             color: 'white',
             fontWeight: 500,
+            fontSize: '0.9rem',
           }}>
             Nobles: {player.nobles.length}
           </Typography>
-          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
             {player.nobles.map((noble) => (
               <Chip
                 key={noble.id}
-                size="medium"
+                size="small"
                 label={`${noble.prestige} pts`}
                 sx={{
                   bgcolor: colors.secondary.main,
                   color: 'black',
-                  borderRadius: `${borderRadius.md}px`,
+                  borderRadius: `${borderRadius.sm}px`,
                   fontWeight: 600,
-                  height: 32,
+                  height: 24,
+                  fontSize: '0.75rem',
                   transition: animations.hover,
                   '&:hover': {
                     transform: 'scale(1.05)',

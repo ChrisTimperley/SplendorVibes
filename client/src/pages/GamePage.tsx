@@ -139,18 +139,38 @@ const GamePage: React.FC = () => {
             fontWeight: 600,
             color: 'white',
             mb: 2,
-            fontSize: '1.1rem'
+            fontSize: '1.1rem',
+            textAlign: 'center',
           }}
         >
-          You: {game.players[0]?.name || 'Player'} {game.currentPlayerIndex === 0 ? '(Current Turn)' : ''}
+          Players
         </Typography>
 
-        <PlayerArea
-          player={game.players[0]}
-          isCurrentPlayer={game.currentPlayerIndex === 0}
-          isActivePlayer={game.currentPlayerIndex === 0}
-        />
+        {/* All Players */}
+        {game.players.map((player, index) => (
+          <Box key={player.id} sx={{ mb: 2 }}>
+            <Typography
+              variant="subtitle1"
+              sx={{
+                fontWeight: 600,
+                color: index === 0 ? 'gold' : 'white',
+                mb: 1,
+                fontSize: '0.95rem'
+              }}
+            >
+              {index === 0 ? 'You: ' : ''}{player.name}
+              {game.currentPlayerIndex === index ? ' (Current Turn)' : ''}
+            </Typography>
 
+            <PlayerArea
+              player={player}
+              isCurrentPlayer={game.currentPlayerIndex === index}
+              isActivePlayer={index === 0}
+            />
+          </Box>
+        ))}
+
+        {/* Game Actions for current player */}
         <GameActions
           selectedTokens={selectedTokens}
           onAction={handleGameAction}
