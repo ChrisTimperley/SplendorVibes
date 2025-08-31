@@ -227,7 +227,9 @@ export class GameEngine {
   }
 
   private isValidTokenTake(tokens: Partial<TokenBank>, availableTokens: TokenBank): boolean {
-    const selectedGems = Object.entries(tokens).filter(([, count]) => count && count > 0);
+    const selectedGems = Object.entries(tokens).filter(([gem, count]) => 
+      count && count > 0 && gem !== 'gold' // Gold cannot be taken directly
+    );
 
     if (selectedGems.length === 0) return false;
 
@@ -258,20 +260,67 @@ export class GameEngine {
       }
     });
 
-    // If no payment specified, auto-calculate minimum payment needed
+    // If no payment specified, auto-calculate if card is affordable
     if (!payment) {
-      return Object.entries(card.cost).every(([gem, cost]) => {
-        const available = playerGems[gem as keyof TokenBank] || 0;
-        return available >= (cost || 0);
-      });
+      let goldNeeded = 0;
+      
+      for (const [gem, cost] of Object.entries(card.cost)) {
+        if (cost && cost > 0) {
+          const available = playerGems[gem as keyof TokenBank] || 0;
+          const shortfall = Math.max(0, cost - available);
+          goldNeeded += shortfall;
+        }
+      }
+      
+      return goldNeeded <= (player.tokens.gold || 0);
     }
 
-    // Check if specified payment covers the cost
-    return Object.entries(card.cost).every(([gem, cost]) => {
-      const available = playerGems[gem as keyof TokenBank] || 0;
-      const paid = payment[gem as keyof TokenBank] || 0;
-      return paid <= available && paid >= Math.max(0, (cost || 0) - (playerGems[gem as keyof TokenBank] || 0));
+    // Validate the specified payment
+    return this.isValidPayment(player, card, payment);
+  }
+
+  private isValidPayment(player: Player, card: Card, payment: Partial<TokenBank>): boolean {
+    // Calculate available resources (tokens + card bonuses)
+    const playerGems = { ...player.tokens };
+    
+    // Add gem bonuses from owned cards
+    player.cards.forEach(ownedCard => {
+      if (ownedCard.gemBonus) {
+        playerGems[ownedCard.gemBonus] = (playerGems[ownedCard.gemBonus] || 0) + 1;
+      }
     });
+
+    // Check if player has enough tokens to make the payment
+    let totalPaid = 0;
+    for (const [gem, amount] of Object.entries(payment)) {
+      if (amount && amount > 0) {
+        const available = playerGems[gem as keyof TokenBank] || 0;
+        if (amount > available) {
+          return false; // Not enough tokens to make this payment
+        }
+        totalPaid += amount;
+      }
+    }
+
+    // Check if the payment covers the card cost
+    let totalCostAfterBonuses = 0;
+    for (const [gem, cost] of Object.entries(card.cost)) {
+      if (cost && cost > 0) {
+        const cardBonuses = player.cards.filter(c => c.gemBonus === gem).length;
+        const gemPayment = payment[gem as keyof TokenBank] || 0;
+        const effectiveCost = Math.max(0, cost - cardBonuses);
+        
+        if (gemPayment < effectiveCost) {
+          // If not enough specific gems paid, the difference must be covered by gold
+          const goldNeeded = effectiveCost - gemPayment;
+          totalCostAfterBonuses += goldNeeded;
+        }
+      }
+    }
+
+    // Check if enough gold is being paid to cover any shortfalls
+    const goldPaid = payment.gold || 0;
+    return goldPaid >= totalCostAfterBonuses;
   }
 
   private calculateMinimumPayment(player: Player, card: Card): Partial<TokenBank> {
@@ -287,17 +336,36 @@ export class GameEngine {
       }
     });
 
+    let goldNeeded = 0;
+
     // Calculate minimum payment needed for each gem type
     Object.entries(card.cost).forEach(([gem, cost]) => {
-      const gemType = gem as keyof TokenBank;
-      const available = playerGems[gemType] || 0;
-      const cardBonuses = player.cards.filter(c => c.gemBonus === gemType).length;
-      const tokensNeeded = Math.max(0, (cost || 0) - cardBonuses);
-
-      if (tokensNeeded > 0) {
-        payment[gemType] = tokensNeeded;
+      if (cost && cost > 0) {
+        const gemType = gem as keyof TokenBank;
+        const cardBonuses = player.cards.filter(c => c.gemBonus === gemType).length;
+        const effectiveCost = Math.max(0, cost - cardBonuses);
+        
+        if (effectiveCost > 0) {
+          const availableTokens = player.tokens[gemType] || 0;
+          const tokensToUse = Math.min(effectiveCost, availableTokens);
+          
+          if (tokensToUse > 0) {
+            payment[gemType] = tokensToUse;
+          }
+          
+          // Any remaining cost must be paid with gold
+          const remaining = effectiveCost - tokensToUse;
+          if (remaining > 0) {
+            goldNeeded += remaining;
+          }
+        }
       }
     });
+
+    // Add gold payment if needed
+    if (goldNeeded > 0) {
+      payment.gold = goldNeeded;
+    }
 
     return payment;
   }

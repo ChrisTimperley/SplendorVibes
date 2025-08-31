@@ -14,7 +14,10 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const validateSelection = (newSelection: Partial<TokenBankType>): string => {
-    const selectedGems = Object.entries(newSelection).filter(([, count]) => count && count > 0);
+    // Filter out gold from validation since it cannot be selected
+    const selectedGems = Object.entries(newSelection).filter(([gem, count]) => 
+      count && count > 0 && gem !== 'gold'
+    );
 
     if (selectedGems.length === 0) return '';
 
@@ -57,6 +60,11 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
   }, [selectedTokens]);
 
   const handleTokenClick = (gem: keyof TokenBankType) => {
+    // Gold tokens cannot be taken directly - they are only obtained by reserving cards
+    if (gem === 'gold') {
+      return;
+    }
+
     const current = selectedTokens[gem] || 0;
     const available = tokens[gem];
 
@@ -102,6 +110,7 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
       }}>
         {Object.entries(tokens).map(([gem, count]) => {
           const selected = selectedTokens[gem as keyof TokenBankType] || 0;
+          const isGold = gem === 'gold';
           return (
             <Box key={gem} sx={{ textAlign: 'center' }}>
               <Box sx={{ position: 'relative', display: 'inline-block' }}>
@@ -109,15 +118,19 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
                   gem={gem as GemType}
                   count={count}
                   size="lg"
-                  interactive
-                  disabled={count === 0}
+                  interactive={!isGold}
+                  disabled={count === 0 || isGold}
                   selected={selected > 0}
                   onClick={() => handleTokenClick(gem as keyof TokenBankType)}
-                  aria-label={`${gem} tokens: ${count} available, ${selected} selected`}
+                  aria-label={
+                    isGold 
+                      ? `${gem} tokens: ${count} available (obtained by reserving cards)`
+                      : `${gem} tokens: ${count} available, ${selected} selected`
+                  }
                 />
 
                 {/* Selection indicator */}
-                {selected > 0 && (
+                {selected > 0 && !isGold && (
                   <Box
                     sx={{
                       position: 'absolute',
@@ -156,6 +169,22 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
               >
                 {gem}
               </Typography>
+              
+              {/* Special note for gold */}
+              {isGold && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    mt: 0.5,
+                    fontSize: '0.7rem',
+                    color: 'text.disabled',
+                    fontStyle: 'italic',
+                    textAlign: 'center'
+                  }}
+                >
+                  (Wildcard)
+                </Typography>
+              )}
             </Box>
           );
         })}
