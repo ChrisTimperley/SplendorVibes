@@ -19,19 +19,27 @@ export default function JewelBadge({ gem }: JewelBadgeProps) {
   const gradientId = `gradient-${gem}`; // Unique ID for each gem type
 
   return (
-    <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label={`${gem} bonus`}>
+    <svg width="40" height="40" viewBox="0 0 40 40" role="img" aria-label={`${gem} bonus`}>
       <defs>
         <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#fff" stopOpacity=".45"/>
-          <stop offset=".35" stopColor={c}/>
-          <stop offset="1" stopColor="#000" stopOpacity=".15"/>
+          <stop offset="0" stopColor="#fff" stopOpacity=".5"/>
+          <stop offset=".4" stopColor={c}/>
+          <stop offset="1" stopColor="#000" stopOpacity=".2"/>
         </linearGradient>
+        <filter id={`shadow-${gem}`} x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000" floodOpacity="0.3"/>
+        </filter>
       </defs>
-      <rect x="1" y="1" width="32" height="32" rx="6" fill={`url(#${gradientId})`} stroke="#ffffff" strokeWidth="3"/>
-      {/* facets */}
-      <polygon points="17,4 30,17 17,30 4,17" fill="#fff" opacity=".18"/>
-      <polygon points="17,4 30,17 17,17" fill="#000" opacity=".12"/>
-      <circle cx="12" cy="9" r="5" fill="#fff" opacity=".3"/> {/* specular */}
+      <rect x="2" y="2" width="36" height="36" rx="8"
+            fill={`url(#${gradientId})`}
+            stroke="#ffffff"
+            strokeWidth="2"
+            filter={`url(#shadow-${gem})`}/>
+      {/* Enhanced facets */}
+      <polygon points="20,5 35,20 20,35 5,20" fill="#fff" opacity=".2"/>
+      <polygon points="20,5 35,20 20,20" fill="#000" opacity=".15"/>
+      <polygon points="5,20 20,5 20,20" fill="#fff" opacity=".1"/>
+      <circle cx="14" cy="12" r="6" fill="#fff" opacity=".4"/> {/* specular highlight */}
     </svg>
   );
 }

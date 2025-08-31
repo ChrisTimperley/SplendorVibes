@@ -12,20 +12,40 @@ const RING: Record<GemType, string> = {
 };
 
 export default function CostPip({gem, n}:{gem:GemType; n:number}) {
+  const ringColor = RING[gem];
+
   return (
     <Box sx={{
-      width:30, height:30, borderRadius:"999px", position:"relative",
-      boxShadow:"inset 0 2px 6px rgba(0,0,0,.06), 0 4px 8px rgba(0,0,0,.15)",
-      background:"linear-gradient(#fff,#f3f5f9)", border:"2px solid #fff"
+      width:36, height:36, borderRadius:"50%", position:"relative",
+      background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), ${ringColor} 60%, #000 100%)`,
+      border: "2px solid rgba(255,255,255,0.9)",
+      boxShadow: "0 3px 8px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.6)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
     }}>
+      {/* Inner gem highlight */}
       <Box sx={{
-        position:"absolute", inset:2, borderRadius:"999px",
-        border:`2px solid ${RING[gem]}`
+        position:"absolute",
+        top: "15%",
+        left: "20%",
+        width: "25%",
+        height: "25%",
+        borderRadius: "50%",
+        background: "rgba(255,255,255,0.7)",
+        filter: "blur(1px)"
       }}/>
+
+      {/* Number */}
       <Box sx={{
-        position:"absolute", inset:0, display:"grid", placeItems:"center",
-        fontWeight:800, fontSize:14, color:"#293041", textShadow:"0 1px 0 #fff"
-      }}>{n}</Box>
+        fontWeight: 900,
+        fontSize: 16,
+        color: gem === GemType.ONYX ? "#fff" : "#000",
+        textShadow: gem === GemType.ONYX ? "0 1px 2px rgba(0,0,0,0.8)" : "0 1px 0 rgba(255,255,255,.8)",
+        zIndex: 1
+      }}>
+        {n}
+      </Box>
     </Box>
   );
 }

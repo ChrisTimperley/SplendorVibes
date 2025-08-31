@@ -61,8 +61,8 @@ export default function DevCard({
 
         {/* bonus jewel */}
         <Box sx={{
-          position:"absolute", top:12, right:10, zIndex:2,
-          filter: "drop-shadow(0 2px 4px rgba(0,0,0,.15))"
+          position:"absolute", top:8, right:8, zIndex:2,
+          filter: "drop-shadow(0 2px 4px rgba(0,0,0,.2))"
         }}>
           <JewelBadge gem={bonusGem} />
         </Box>
@@ -71,17 +71,13 @@ export default function DevCard({
       {/* cost column */}
       <Box sx={{
         position:"absolute",
-        left:12,
-        bottom:16,
+        left:8,
+        bottom:12,
         display:"flex",
         flexDirection: "column",
-        gap: 1,
-        alignItems: "center",
-        background: "rgba(255,255,255,.9)",
-        borderRadius: 2,
-        padding: "6px 4px",
-        border: "1px solid rgba(255,255,255,.8)",
-        backdropFilter: "blur(4px)"
+        gap: 0.5,
+        alignItems: "flex-start",
+        zIndex: 2
       }}>
         {costs.map(c => <CostPip key={c.gem} gem={c.gem} n={c.n} />)}
       </Box>
