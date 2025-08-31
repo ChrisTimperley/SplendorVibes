@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { Game } from '../../../shared/types/game';
 import { gameService } from '../services/gameService';
 import { socketService } from '../services/socketService';
@@ -93,38 +93,70 @@ const GamePage: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} lg={8}>
-          <GameBoard
-            board={game.board}
-            onCardAction={handleGameAction}
-            selectedTokens={selectedTokens}
-            onTokenSelectionChange={setSelectedTokens}
-          />
-        </Grid>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+        display: 'grid',
+        gridTemplateColumns: '1fr 320px',
+        gap: 3,
+        p: 2,
+        '@media (max-width: 1200px)': {
+          gridTemplateColumns: '1fr',
+          gap: 2,
+        }
+      }}
+    >
+      {/* Main Game Area */}
+      <Box sx={{ minWidth: 0 }}>
+        <GameBoard
+          board={game.board}
+          onCardAction={handleGameAction}
+          selectedTokens={selectedTokens}
+          onTokenSelectionChange={setSelectedTokens}
+        />
+      </Box>
 
-        <Grid item xs={12} lg={4}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            {game.players.map((player, index) => (
-              <PlayerArea
-                key={player.id}
-                player={player}
-                isCurrentPlayer={index === game.currentPlayerIndex}
-                isActivePlayer={player.id === currentPlayer}
-              />
-            ))}
-          </Box>
-        </Grid>
-      </Grid>
+      {/* Sticky Player Sidebar */}
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 16,
+          height: 'fit-content',
+          background: 'rgba(0, 0, 0, 0.3)',
+          borderRadius: 2,
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          p: 2,
+          '@media (max-width: 1200px)': {
+            position: 'static',
+            order: -1,
+          }
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 600,
+            color: 'white',
+            mb: 2,
+            fontSize: '1.1rem'
+          }}
+        >
+          You: {game.players[0]?.name || 'Player'} {game.currentPlayerIndex === 0 ? '(Current Turn)' : ''}
+        </Typography>
 
-      {currentPlayer && (
+        <PlayerArea
+          player={game.players[0]}
+          isCurrentPlayer={game.currentPlayerIndex === 0}
+          isActivePlayer={game.currentPlayerIndex === 0}
+        />
+
         <GameActions
           selectedTokens={selectedTokens}
           onAction={handleGameAction}
-          isCurrentPlayerTurn={game.players[game.currentPlayerIndex]?.id === currentPlayer}
+          isCurrentPlayerTurn={game.currentPlayerIndex === 0}
         />
-      )}
+      </Box>
     </Box>
   );
 };

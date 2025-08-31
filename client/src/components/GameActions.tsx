@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
-import { borderRadius } from '../theme';
+import { borderRadius, animations } from '../theme';
 
 interface GameActionsProps {
   selectedTokens: any;
@@ -73,11 +73,21 @@ const GameActions: React.FC<GameActionsProps> = ({ selectedTokens, onAction, isC
           variant="contained"
           onClick={() => handleAction('take-tokens', { tokens: selectedTokens })}
           disabled={!canTakeTokens()}
+          aria-label={!isCurrentPlayerTurn ? 'Wait for your turn to take tokens' : `Take selected tokens`}
           sx={{
             minWidth: 180,
             height: 48,
             fontSize: '0.95rem',
             fontWeight: 600,
+            transition: animations.focus,
+            '&:focus-visible': {
+              outline: '2px solid #3f51b5',
+              outlineOffset: '2px',
+            },
+            '&:hover': !canTakeTokens() ? {} : {
+              transform: 'translateY(-1px)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+            },
             ...(isCurrentPlayerTurn ? {} : {
               bgcolor: 'rgba(158, 158, 158, 0.3)',
               color: 'text.secondary',
@@ -113,14 +123,31 @@ const GameActions: React.FC<GameActionsProps> = ({ selectedTokens, onAction, isC
           <Button
             onClick={handleCancel}
             variant="outlined"
-            sx={{ minWidth: 100 }}
+            autoFocus
+            aria-label="Cancel action"
+            sx={{
+              minWidth: 100,
+              transition: animations.focus,
+              '&:focus-visible': {
+                outline: '2px solid #3f51b5',
+                outlineOffset: '2px',
+              },
+            }}
           >
             CANCEL
           </Button>
           <Button
             onClick={handleConfirm}
             variant="contained"
-            sx={{ minWidth: 100 }}
+            aria-label="Confirm action"
+            sx={{
+              minWidth: 100,
+              transition: animations.focus,
+              '&:focus-visible': {
+                outline: '2px solid #fff',
+                outlineOffset: '2px',
+              },
+            }}
           >
             CONFIRM
           </Button>

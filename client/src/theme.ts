@@ -19,6 +19,53 @@ const borderRadius = {
   xl: 16
 };
 
+// Size system for consistent component sizing
+const sizes = {
+  chip: {
+    sm: { width: 24, height: 24, fontSize: '0.7rem' },
+    md: { width: 32, height: 32, fontSize: '0.8rem' },
+    lg: { width: 40, height: 40, fontSize: '0.9rem' }
+  },
+  card: {
+    sm: { width: 120, height: 160 },
+    md: { width: 140, height: 180 },
+    lg: { width: 160, height: 200 }
+  },
+  noble: {
+    width: 120,
+    height: 80
+  }
+};
+
+// Gem system with symbols, letters, and colors for accessibility
+const gemSystem = {
+  diamond: { color: '#E8E8E8', symbol: '◇', letter: 'D', contrastColor: '#000' },
+  sapphire: { color: '#4169E1', symbol: '●', letter: 'S', contrastColor: '#FFF' },
+  emerald: { color: '#50C878', symbol: '▲', letter: 'E', contrastColor: '#000' },
+  ruby: { color: '#E0115F', symbol: '■', letter: 'R', contrastColor: '#FFF' },
+  onyx: { color: '#36454F', symbol: '♦', letter: 'O', contrastColor: '#FFF' },
+  gold: { color: '#FFD700', symbol: '★', letter: 'G', contrastColor: '#000' }
+};
+
+// Animation presets respecting user motion preferences
+const animations = {
+  hover: {
+    duration: '0.2s',
+    easing: 'ease-out',
+    lift: 'translateY(-2px)',
+    glow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+  },
+  popup: {
+    duration: '0.15s',
+    easing: 'ease-out',
+    scale: 'scale(1.05)'
+  },
+  focus: {
+    outline: '2px solid #3f51b5',
+    outlineOffset: '2px'
+  }
+};
+
 // Renaissance-inspired color palette
 const colors = {
   primary: {
@@ -36,21 +83,14 @@ const colors = {
   background: {
     default: '#FFF8DC', // Cornsilk - warm parchment color
     paper: '#FFFEF7', // Slightly warmer white
-    card: '#F5F5DC' // Beige for cards
+    card: '#F5F5DC', // Beige for cards
+    parchment: '#F4F1E8' // Parchment for placeholders
   },
   text: {
     primary: '#2C1810', // Dark brown for primary text
     secondary: '#5D4E37' // Medium brown for secondary text
   },
-  divider: '#E8D5B7', // Light tan for dividers
-  gems: {
-    diamond: '#E8E8E8',
-    sapphire: '#4169E1',
-    emerald: '#50C878',
-    ruby: '#E0115F',
-    onyx: '#36454F',
-    gold: '#FFD700'
-  }
+  divider: '#E8D5B7' // Light tan for dividers
 };
 
 export const theme = createTheme({
@@ -208,5 +248,5 @@ export const theme = createTheme({
   }
 });
 
-// Export spacing and colors for use in components
-export { spacing, borderRadius, colors };
+// Export all design system objects for use in components
+export { spacing, borderRadius, colors, sizes, gemSystem, animations };

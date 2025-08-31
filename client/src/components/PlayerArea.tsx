@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Box, Chip } from '@mui/material';
 import { Player, GemType } from '../../../shared/types/game';
-import { borderRadius, colors } from '../theme';
+import { borderRadius, colors, animations } from '../theme';
 import { gemColors } from '../constants/gemColors';
 
 interface PlayerAreaProps {
@@ -11,6 +11,19 @@ interface PlayerAreaProps {
 }
 
 const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActivePlayer }) => {
+  const [prestigeChanged, setPrestigeChanged] = useState(false);
+  const [previousPrestige, setPreviousPrestige] = useState(player.prestige);
+
+  // Noble qualification "pop" animation trigger
+  useEffect(() => {
+    if (player.prestige > previousPrestige) {
+      setPrestigeChanged(true);
+      const timer = setTimeout(() => setPrestigeChanged(false), 500);
+      return () => clearTimeout(timer);
+    }
+    setPreviousPrestige(player.prestige);
+  }, [player.prestige, previousPrestige]);
+
   return (
     <Paper
       elevation={0}
@@ -25,27 +38,44 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActi
         borderRadius: `${borderRadius.xl}px`,
         boxShadow: isCurrentPlayer
           ? '0 8px 24px rgba(139, 69, 19, 0.15), 0 4px 8px rgba(139, 69, 19, 0.1)'
-          : '0 2px 8px rgba(44, 24, 16, 0.08), 0 1px 2px rgba(44, 24, 16, 0.04)'
+          : '0 2px 8px rgba(44, 24, 16, 0.08), 0 1px 2px rgba(44, 24, 16, 0.04)',
+        transition: animations.hover,
+        '&:hover': {
+          transform: 'translateY(-1px)',
+          boxShadow: isCurrentPlayer
+            ? '0 12px 32px rgba(139, 69, 19, 0.2), 0 6px 12px rgba(139, 69, 19, 0.15)'
+            : '0 4px 16px rgba(44, 24, 16, 0.12), 0 2px 4px rgba(44, 24, 16, 0.08)',
+        }
       }}
     >
-      <Typography variant="h4" gutterBottom sx={{ mb: 1 }}>
-        {isActivePlayer && <strong style={{ color: colors.primary.main }}>You: </strong>}
+      <Typography variant="h4" gutterBottom sx={{
+        mb: 1,
+        color: 'white',
+        fontWeight: 600,
+      }}>
+        {isActivePlayer && <strong style={{ color: colors.secondary.light }}>You: </strong>}
         {player.name} {isCurrentPlayer && '(Current Turn)'}
       </Typography>
 
       <Typography
         variant="h3"
         sx={{
-          color: 'primary.main',
+          color: colors.secondary.light, // Use gold color for better contrast
           mb: 3,
-          fontWeight: 600
+          fontWeight: 600,
+          transform: prestigeChanged ? 'scale(1.15)' : 'scale(1)',
+          transition: animations.popup,
         }}
       >
         {player.prestige} Prestige Points
       </Typography>
 
       {/* Tokens */}
-      <Typography variant="h5" gutterBottom sx={{ mb: 1 }}>
+      <Typography variant="h5" gutterBottom sx={{
+        mb: 1,
+        color: 'white',
+        fontWeight: 500,
+      }}>
         Tokens:
       </Typography>
       <Box sx={{ display: 'flex', gap: 1, mb: 3, flexWrap: 'wrap' }}>
@@ -62,7 +92,13 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActi
                 borderRadius: `${borderRadius.md}px`,
                 fontWeight: 600,
                 minWidth: 36,
-                height: 32
+                height: 32,
+                transition: animations.hover,
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                  cursor: 'default',
+                },
               }}
             />
           )
@@ -70,7 +106,11 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActi
       </Box>
 
       {/* Card Bonuses */}
-      <Typography variant="h5" gutterBottom sx={{ mb: 1 }}>
+      <Typography variant="h5" gutterBottom sx={{
+        mb: 1,
+        color: 'white',
+        fontWeight: 500,
+      }}>
         Card Bonuses:
       </Typography>
       <Box sx={{ display: 'flex', gap: 1, mb: 3, flexWrap: 'wrap' }}>
@@ -93,9 +133,13 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActi
               fontWeight: 600,
               minWidth: 36,
               height: 32,
+              transition: animations.hover,
               '&:hover': {
                 borderColor: gemColors[gem as GemType],
-                backgroundColor: `${gemColors[gem as GemType]}15`
+                backgroundColor: `${gemColors[gem as GemType]}15`,
+                transform: 'scale(1.05)',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                cursor: 'default',
               }
             }}
           />
@@ -105,7 +149,11 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActi
       {/* Reserved Cards */}
       {player.reservedCards.length > 0 && (
         <Box sx={{ mb: 2 }}>
-          <Typography variant="h5" gutterBottom sx={{ mb: 1 }}>
+          <Typography variant="h5" gutterBottom sx={{
+            mb: 1,
+            color: 'white',
+            fontWeight: 500,
+          }}>
             Reserved Cards: {player.reservedCards.length}
           </Typography>
         </Box>
@@ -114,7 +162,11 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActi
       {/* Nobles */}
       {player.nobles.length > 0 && (
         <Box>
-          <Typography variant="h5" gutterBottom sx={{ mb: 1 }}>
+          <Typography variant="h5" gutterBottom sx={{
+            mb: 1,
+            color: 'white',
+            fontWeight: 500,
+          }}>
             Nobles: {player.nobles.length}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -128,7 +180,13 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, isActi
                   color: 'black',
                   borderRadius: `${borderRadius.md}px`,
                   fontWeight: 600,
-                  height: 32
+                  height: 32,
+                  transition: animations.hover,
+                  '&:hover': {
+                    transform: 'scale(1.05)',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                    cursor: 'default',
+                  }
                 }}
               />
             ))}

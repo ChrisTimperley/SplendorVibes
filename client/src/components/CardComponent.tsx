@@ -1,218 +1,221 @@
 import React from 'react';
-import { Paper, Typography, Box, Button } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { Card, GemType } from '../../../shared/types/game';
-import { borderRadius, colors } from '../theme';
 import { gemColors } from '../constants/gemColors';
+import { sizes, animations } from '../theme';
 
 interface CardComponentProps {
   card: Card;
-  onAction: (action: string, payload: any) => void;
+  onPurchase?: () => void;
+  isDisabled?: boolean;
+  showPurchaseButton?: boolean;
 }
 
-const CardComponent: React.FC<CardComponentProps> = ({ card, onAction }) => {
-  const handlePurchase = () => {
-    onAction('purchase-card', { cardId: card.id });
-  };
+// Helper function to get gem color
+const getGemColor = (gemType: GemType): string => {
+  return gemColors[gemType] || '#666';
+};
 
-  const handleReserve = () => {
-    onAction('reserve-card', { cardId: card.id });
+const CardComponent: React.FC<CardComponentProps> = ({
+  card,
+  onPurchase,
+  isDisabled = false,
+  showPurchaseButton = true
+}) => {
+  const handleClick = () => {
+    if (!isDisabled && onPurchase) {
+      onPurchase();
+    }
   };
 
   return (
-    <Paper
-      elevation={0}
+    <Box
+      onClick={handleClick}
       sx={{
-        width: 140,
-        height: 200,
-        p: 1.5,
-        display: 'flex',
-        flexDirection: 'column',
-        border: `2px solid ${gemColors[card.gemBonus] || colors.divider}`,
-        borderRadius: `${borderRadius.xl}px`,
+        width: sizes.card.md.width,
+        height: sizes.card.md.height,
+        borderRadius: 3,
         position: 'relative',
-        cursor: 'pointer',
-        background: `linear-gradient(135deg, ${colors.background.paper} 0%, ${colors.background.card} 100%)`,
+        cursor: isDisabled ? 'not-allowed' : showPurchaseButton ? 'pointer' : 'default',
+        transition: animations.hover,
+        backgroundColor: 'white',
+        border: '1px solid rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
         overflow: 'hidden',
-        boxShadow: '0 4px 12px rgba(44, 24, 16, 0.1), 0 2px 4px rgba(44, 24, 16, 0.06)',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          transition: 'all 0.3s ease',
-          boxShadow: '0 12px 32px rgba(44, 24, 16, 0.15), 0 6px 12px rgba(44, 24, 16, 0.1)',
-          borderColor: gemColors[card.gemBonus] || colors.primary.main
-        }
+        '&:hover': !isDisabled && showPurchaseButton ? {
+          transform: 'translateY(-2px) scale(1.01)',
+          boxShadow: `0 8px 20px rgba(0, 0, 0, 0.25), 0 0 0 1px ${getGemColor(card.gemBonus)}`,
+          zIndex: 10,
+        } : {},
+        '&:active': !isDisabled && showPurchaseButton ? {
+          transform: 'translateY(-1px) scale(1.005)',
+        } : {},
+        opacity: isDisabled ? 0.6 : 1,
       }}
     >
-      {/* Prestige Points */}
+      {/* Prestige Points - Top Left (like real Splendor cards) */}
       {card.prestige > 0 && (
         <Box
           sx={{
             position: 'absolute',
-            top: 1,
-            right: 1,
+            top: 8,
+            left: 8,
+            zIndex: 2,
             width: 32,
             height: 32,
             borderRadius: '50%',
-            background: `linear-gradient(135deg, ${colors.secondary.main} 0%, ${colors.secondary.dark} 100%)`,
-            border: `2px solid ${colors.secondary.dark}`,
-            color: 'black',
+            backgroundColor: 'white',
+            border: '2px solid #333',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '0.85rem',
-            fontWeight: 'bold',
-            boxShadow: '0 2px 8px rgba(218, 165, 32, 0.3)',
-            zIndex: 10
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
           }}
         >
-          {card.prestige}
+          <Typography
+            sx={{
+              fontSize: '18px',
+              fontWeight: 'bold',
+              color: '#333',
+              lineHeight: 1,
+            }}
+          >
+            {card.prestige}
+          </Typography>
         </Box>
       )}
 
-      {/* Gem Bonus */}
+      {/* Bonus Gem - Top Right (square like real cards) */}
       <Box
         sx={{
-          width: 36,
-          height: 36,
-          borderRadius: '50%',
-          bgcolor: gemColors[card.gemBonus] || colors.divider,
-          border: card.gemBonus === GemType.DIAMOND ? '2px solid #999' :
-                 card.gemBonus === GemType.ONYX ? '2px solid #555' :
-                 `2px solid rgba(255,255,255,0.2)`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: card.gemBonus === GemType.DIAMOND ? '#333' :
-                 card.gemBonus === GemType.GOLD ? '#000' :
-                 card.gemBonus === GemType.ONYX ? '#fff' : 'white',
-          fontSize: '0.9rem',
-          fontWeight: 'bold',
-          mb: 1.5,
-          alignSelf: 'center',
-          boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-          background: `linear-gradient(135deg, ${gemColors[card.gemBonus] || colors.divider} 0%, ${gemColors[card.gemBonus] || colors.divider}dd 100%)`
+          position: 'absolute',
+          top: 8,
+          right: 8,
+          zIndex: 2,
+          width: 28,
+          height: 28,
+          borderRadius: '6px',
+          backgroundColor: getGemColor(card.gemBonus),
+          border: '2px solid white',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
         }}
-      >
-        {card.gemBonus.charAt(0).toUpperCase()}
-      </Box>
+      />
 
-      {/* Cost */}
-      <Typography
-        variant="body2"
+      {/* Cost Gems - Left Side Vertical Stack (like real cards) */}
+      <Box
         sx={{
-          mb: 1,
-          fontWeight: 600,
-          fontSize: '0.7rem',
-          color: 'text.primary',
-          textTransform: 'uppercase',
-          letterSpacing: 0.5,
-          fontFamily: '"Inter", sans-serif'
+          position: 'absolute',
+          left: 8,
+          bottom: 8,
+          zIndex: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 0.5,
         }}
       >
-        Cost
-      </Typography>
-      <Box sx={{ mb: 1.5, flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {Object.entries(card.cost)
-          .filter(([_, cost]) => cost > 0)
-          .map(([gem, cost]) => (
+        {Object.entries(card.cost).map(([gemType, cost]) => {
+          if (!cost || cost === 0) return null;
+
+          return (
             <Box
-              key={gem}
+              key={gemType}
               sx={{
+                width: 28,
+                height: 28,
+                borderRadius: '50%',
+                backgroundColor: getGemColor(gemType as GemType),
+                border: '2px solid white',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                bgcolor: gemColors[gem as GemType] || colors.divider,
-                color: gem === 'diamond' ? '#333' :
-                       gem === 'gold' ? '#000' :
-                       gem === 'onyx' ? '#fff' : 'white',
-                borderRadius: `${borderRadius.sm}px`,
-                px: 1,
-                py: 2,
-                fontSize: '0.7rem',
-                fontWeight: 600,
-                minHeight: 18,
-                boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
-                background: `linear-gradient(90deg, ${gemColors[gem as GemType] || colors.divider} 0%, ${gemColors[gem as GemType] || colors.divider}dd 100%)`
+                justifyContent: 'center',
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
+                position: 'relative',
               }}
             >
-              <Box
+              <Typography
                 sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  bgcolor: 'rgba(255,255,255,0.5)',
-                  border: '1px solid rgba(255,255,255,0.7)'
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                  lineHeight: 1,
                 }}
-              />
-              <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.7rem' }}>
+              >
                 {cost}
               </Typography>
             </Box>
-          ))
-        }
-        {Object.values(card.cost).every(cost => cost === 0) && (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              bgcolor: colors.secondary.light,
-              color: colors.secondary.dark,
-              borderRadius: `${borderRadius.sm}px`,
-              py: 0.5,
-              fontStyle: 'italic',
-              fontSize: '0.7rem',
-              fontWeight: 500
-            }}
-          >
-            Free
-          </Box>
-        )}
+          );
+        })}
       </Box>
 
-      {/* Actions */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mt: 'auto' }}>
-        <Button
-          size="small"
-          variant="contained"
-          onClick={handlePurchase}
+      {/* Main Artwork Area - fills the center */}
+      <Box
+        sx={{
+          position: 'absolute',
+          inset: 0,
+          background: `linear-gradient(135deg,
+            ${getGemColor(card.gemBonus)}15 0%,
+            ${getGemColor(card.gemBonus)}08 30%,
+            ${getGemColor(card.gemBonus)}03 60%,
+            ${getGemColor(card.gemBonus)}08 100%
+          )`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            inset: 0,
+            background: `
+              radial-gradient(circle at 70% 30%, ${getGemColor(card.gemBonus)}20 0%, transparent 50%),
+              radial-gradient(circle at 30% 70%, ${getGemColor(card.gemBonus)}15 0%, transparent 60%),
+              linear-gradient(45deg, transparent 40%, ${getGemColor(card.gemBonus)}05 50%, transparent 60%)
+            `,
+          }
+        }}
+      >
+        {/* Subtle tier indicator in center (like artwork placeholder) */}
+        <Typography
           sx={{
-            fontSize: '0.65rem',
-            py: 0.5,
-            minHeight: 28,
-            fontWeight: 600,
-            borderRadius: `${borderRadius.md}px`,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            '&:hover': {
-              transform: 'translateY(-1px)'
-            }
+            fontSize: '48px',
+            fontWeight: 100,
+            color: `${getGemColor(card.gemBonus)}40`,
+            zIndex: 1,
+            userSelect: 'none',
+            letterSpacing: '2px',
           }}
         >
-          Buy
-        </Button>
-        <Button
-          size="small"
-          variant="outlined"
-          onClick={handleReserve}
-          sx={{
-            fontSize: '0.65rem',
-            py: 0.5,
-            minHeight: 28,
-            fontWeight: 600,
-            borderRadius: `${borderRadius.md}px`,
-            borderWidth: 2,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            '&:hover': {
-              borderWidth: 2,
-              transform: 'translateY(-1px)'
-            }
-          }}
-        >
-          Reserve
-        </Button>
+          {card.tier}
+        </Typography>
       </Box>
-    </Paper>
+
+      {/* Decorative border frame (like real card edges) */}
+      <Box
+        sx={{
+          position: 'absolute',
+          inset: 4,
+          border: `1px solid ${getGemColor(card.gemBonus)}30`,
+          borderRadius: 2,
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Purchase Overlay for Interaction Feedback */}
+      {showPurchaseButton && !isDisabled && (
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: 3,
+            backgroundColor: 'transparent',
+            transition: 'background-color 0.2s ease',
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            },
+          }}
+        />
+      )}
+    </Box>
   );
 };
 
