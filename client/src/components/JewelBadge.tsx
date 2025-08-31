@@ -16,16 +16,18 @@ interface JewelBadgeProps {
 
 export default function JewelBadge({ gem }: JewelBadgeProps) {
   const c = COLORS[gem];
+  const gradientId = `gradient-${gem}`; // Unique ID for each gem type
+
   return (
     <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label={`${gem} bonus`}>
       <defs>
-        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#fff" stopOpacity=".45"/>
           <stop offset=".35" stopColor={c}/>
           <stop offset="1" stopColor="#000" stopOpacity=".15"/>
         </linearGradient>
       </defs>
-      <rect x="1" y="1" width="32" height="32" rx="6" fill="url(#g)" stroke="#ffffff" strokeWidth="3"/>
+      <rect x="1" y="1" width="32" height="32" rx="6" fill={`url(#${gradientId})`} stroke="#ffffff" strokeWidth="3"/>
       {/* facets */}
       <polygon points="17,4 30,17 17,30 4,17" fill="#fff" opacity=".18"/>
       <polygon points="17,4 30,17 17,17" fill="#000" opacity=".12"/>

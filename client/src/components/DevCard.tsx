@@ -61,7 +61,7 @@ export default function DevCard({
 
         {/* bonus jewel */}
         <Box sx={{
-          position:"absolute", top:8, right:10, zIndex:2,
+          position:"absolute", top:12, right:10, zIndex:2,
           filter: "drop-shadow(0 2px 4px rgba(0,0,0,.15))"
         }}>
           <JewelBadge gem={bonusGem} />
