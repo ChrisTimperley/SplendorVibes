@@ -1,8 +1,8 @@
 import React from 'react';
 import { Typography, Box } from '@mui/material';
 import { GameBoard as GameBoardType } from '../../../shared/types/game';
-import { borderRadius, colors, sizes } from '../theme';
-import CardComponent from './CardComponent';
+import { borderRadius, colors } from '../theme';
+import GameCard from './GameCard';
 import NobleComponent from './NobleComponent';
 import TokenBank from './TokenBank';
 
@@ -19,7 +19,8 @@ const GameBoard: React.FC<GameBoardProps> = ({
   selectedTokens,
   onTokenSelectionChange
 }) => {
-  const cardSize = sizes.card.md;
+  // Use DevCard dimensions (220x300)
+  const cardSize = { width: 220, height: 300 };
 
   const DeckPlaceholder: React.FC<{ count: number }> = ({ count }) => (
     <Box
@@ -188,7 +189,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
               px: 2
             }}>
               {board.availableCards[`tier${tier}` as keyof typeof board.availableCards].map((card) => (
-                <CardComponent
+                <GameCard
                   key={card.id}
                   card={card}
                   onPurchase={() => onCardAction('purchase-card', { cardId: card.id })}

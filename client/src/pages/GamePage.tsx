@@ -165,7 +165,6 @@ const GamePage: React.FC = () => {
             <PlayerArea
               player={player}
               isCurrentPlayer={game.currentPlayerIndex === index}
-              isActivePlayer={index === 0}
             />
           </Box>
         ))}

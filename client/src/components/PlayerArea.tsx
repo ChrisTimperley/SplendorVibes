@@ -161,7 +161,7 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer }) => {
         <Box>
           <Typography variant="h6" sx={{
             mb: 1,
-            color: 'white',
+            color: colors.secondary.light, // Use gold color for better visibility
             fontWeight: 500,
             fontSize: '0.9rem',
           }}>
