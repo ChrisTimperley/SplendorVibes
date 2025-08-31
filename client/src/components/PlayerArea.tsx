@@ -181,7 +181,8 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, onPurc
               <ReservedCard
                 key={card.id}
                 card={card}
-                onClick={handleReservedCardClick}
+                onClick={onPurchaseReservedCard ? handleReservedCardClick : undefined}
+                disabled={!onPurchaseReservedCard}
               />
             ))}
           </Box>

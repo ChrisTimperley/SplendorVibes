@@ -7,7 +7,8 @@ import { GemType } from '../../../shared/types/game';
 
 interface ReservedCardProps {
   card: Card;
-  onClick: (card: Card) => void;
+  onClick?: (card: Card) => void;
+  disabled?: boolean;
 }
 
 // Helper function to convert Card cost to DevCard cost format
@@ -47,12 +48,14 @@ const getCardArtUrl = (card: Card): string => {
   return `/card-art/${gemName}-tier${card.tier}.png`;
 };
 
-const ReservedCard: React.FC<ReservedCardProps> = ({ card, onClick }) => {
+const ReservedCard: React.FC<ReservedCardProps> = ({ card, onClick, disabled = false }) => {
   const costs = convertCostToPips(card.cost);
   const artUrl = getCardArtUrl(card);
 
   const handleClick = () => {
-    onClick(card);
+    if (!disabled && onClick) {
+      onClick(card);
+    }
   };
 
   // Small card component (40x55 pixels)
@@ -67,9 +70,10 @@ const ReservedCard: React.FC<ReservedCardProps> = ({ card, onClick }) => {
         overflow: "hidden",
         background: "#fff",
         border: "1px solid #cbd5e1",
-        cursor: "pointer",
+        cursor: disabled ? "default" : "pointer",
         transition: "all 0.2s ease",
-        '&:hover': {
+        opacity: disabled ? 0.8 : 1,
+        '&:hover': disabled ? {} : {
           transform: 'scale(1.05)',
           boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
         }
