@@ -48,7 +48,7 @@ const convertCostToPips = (cost: Partial<{
 const getCardArtUrl = (card: Card): string => {
   // For now, use placeholder images based on gem type and tier
   const gemName = card.gemBonus.toLowerCase();
-  return `/card-art/${gemName}-tier${card.tier}.jpg`;
+  return `/card-art/${gemName}-tier${card.tier}.png`;
 };
 
 const GameCard: React.FC<GameCardProps> = ({
