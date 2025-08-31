@@ -5,9 +5,9 @@ import DevCard from './DevCard';
 
 interface GameCardProps {
   card: Card;
-  onPurchase?: () => void;
+  onCardSelect?: (card: Card) => void;
   isDisabled?: boolean;
-  showPurchaseButton?: boolean;
+  showSelectable?: boolean;
 }
 
 // Helper function to convert Card cost to DevCard cost format
@@ -53,16 +53,16 @@ const getCardArtUrl = (card: Card): string => {
 
 const GameCard: React.FC<GameCardProps> = ({
   card,
-  onPurchase,
+  onCardSelect,
   isDisabled = false,
-  showPurchaseButton = true
+  showSelectable = true
 }) => {
   const costs = convertCostToPips(card.cost);
   const artUrl = getCardArtUrl(card);
 
   const handleClick = () => {
-    if (!isDisabled && showPurchaseButton && onPurchase) {
-      onPurchase();
+    if (!isDisabled && showSelectable && onCardSelect) {
+      onCardSelect(card);
     }
   };
 
@@ -70,10 +70,10 @@ const GameCard: React.FC<GameCardProps> = ({
     <Box
       onClick={handleClick}
       sx={{
-        cursor: isDisabled ? 'not-allowed' : showPurchaseButton ? 'pointer' : 'default',
+        cursor: isDisabled ? 'not-allowed' : showSelectable ? 'pointer' : 'default',
         opacity: isDisabled ? 0.6 : 1,
         transition: 'transform 0.2s ease, opacity 0.2s ease',
-        ...(showPurchaseButton && !isDisabled && {
+        ...(showSelectable && !isDisabled && {
           '&:hover': {
             transform: 'translateY(-2px) scale(1.02)',
           }

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Typography, Box } from '@mui/material';
-import { GameBoard as GameBoardType } from '../../../shared/types/game';
+import { GameBoard as GameBoardType, Card } from '../../../shared/types/game';
 import { borderRadius, colors } from '../theme';
 import GameCard from './GameCard';
 import NobleComponent from './NobleComponent';
 import TokenBank from './TokenBank';
+import CardActionDialog from './CardActionDialog';
 
 interface GameBoardProps {
   board: GameBoardType;
@@ -19,8 +20,29 @@ const GameBoard: React.FC<GameBoardProps> = ({
   selectedTokens,
   onTokenSelectionChange
 }) => {
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [cardDialogOpen, setCardDialogOpen] = useState(false);
+
   // Use DevCard dimensions (220x300)
   const cardSize = { width: 220, height: 300 };
+
+  const handleCardSelect = (card: Card) => {
+    setSelectedCard(card);
+    setCardDialogOpen(true);
+  };
+
+  const handleCardDialogClose = () => {
+    setCardDialogOpen(false);
+    setSelectedCard(null);
+  };
+
+  const handlePurchaseCard = (cardId: string) => {
+    onCardAction('purchase-card', { cardId });
+  };
+
+  const handleReserveCard = (cardId: string) => {
+    onCardAction('reserve-card', { cardId });
+  };
 
   const getTierColors = (tier: number) => {
     switch (tier) {
@@ -242,7 +264,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
                 <GameCard
                   key={card.id}
                   card={card}
-                  onPurchase={() => onCardAction('purchase-card', { cardId: card.id })}
+                  onCardSelect={handleCardSelect}
                 />
               ))}
 
@@ -264,6 +286,15 @@ const GameBoard: React.FC<GameBoardProps> = ({
           onTokenSelectionChange={onTokenSelectionChange}
         />
       </Box>
+
+      {/* Card Action Dialog */}
+      <CardActionDialog
+        open={cardDialogOpen}
+        card={selectedCard}
+        onClose={handleCardDialogClose}
+        onPurchase={handlePurchaseCard}
+        onReserve={handleReserveCard}
+      />
     </Box>
   );
 };
