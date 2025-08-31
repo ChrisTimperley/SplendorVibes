@@ -119,4 +119,15 @@ export class GameController {
       res.status(400).json({ error: (error as Error).message });
     }
   };
+
+  purchaseReservedCard = async (req: Request, res: Response) => {
+    try {
+      const { gameId } = req.params;
+      const { playerId, cardId, payment } = req.body;
+      const game = await this.gameService.purchaseReservedCard(gameId, playerId, cardId, payment);
+      res.json(game);
+    } catch (error) {
+      res.status(400).json({ error: (error as Error).message });
+    }
+  };
 }

@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Box, Chip } from '@mui/material';
-import { Player, GemType } from '../../../shared/types/game';
+import { Player, GemType, Card } from '../../../shared/types/game';
 import { borderRadius, colors, animations } from '../theme';
 import { gemColors } from '../constants/gemColors';
+import ReservedCard from './ReservedCard';
+import ReservedCardDialog from './ReservedCardDialog';
 
 interface PlayerAreaProps {
   player: Player;
   isCurrentPlayer: boolean;
+  onPurchaseReservedCard?: (cardId: string) => void;
 }
 
-const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer }) => {
+const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, onPurchaseReservedCard }) => {
   const [prestigeChanged, setPrestigeChanged] = useState(false);
   const [previousPrestige, setPreviousPrestige] = useState(player.prestige);
+  const [selectedReservedCard, setSelectedReservedCard] = useState<Card | null>(null);
+  const [reservedCardDialogOpen, setReservedCardDialogOpen] = useState(false);
 
   // Noble qualification "pop" animation trigger
   useEffect(() => {
@@ -22,6 +27,24 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer }) => {
     }
     setPreviousPrestige(player.prestige);
   }, [player.prestige, previousPrestige]);
+
+  const handleReservedCardClick = (card: Card) => {
+    setSelectedReservedCard(card);
+    setReservedCardDialogOpen(true);
+  };
+
+  const handlePurchaseReservedCard = (cardId: string) => {
+    if (onPurchaseReservedCard) {
+      onPurchaseReservedCard(cardId);
+    }
+    setReservedCardDialogOpen(false);
+    setSelectedReservedCard(null);
+  };
+
+  const handleCloseReservedCardDialog = () => {
+    setReservedCardDialogOpen(false);
+    setSelectedReservedCard(null);
+  };
 
   return (
     <Paper
@@ -144,15 +167,24 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer }) => {
 
       {/* Reserved Cards */}
       {player.reservedCards.length > 0 && (
-        <Box sx={{ mb: 1 }}>
+        <Box sx={{ mb: 2 }}>
           <Typography variant="h6" sx={{
-            mb: 0.5,
+            mb: 1,
             color: 'white',
             fontWeight: 500,
             fontSize: '0.9rem',
           }}>
             Reserved Cards: {player.reservedCards.length}
           </Typography>
+          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+            {player.reservedCards.map((card) => (
+              <ReservedCard
+                key={card.id}
+                card={card}
+                onClick={handleReservedCardClick}
+              />
+            ))}
+          </Box>
         </Box>
       )}
 
@@ -192,6 +224,15 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer }) => {
           </Box>
         </Box>
       )}
+
+      {/* Reserved Card Purchase Dialog */}
+      <ReservedCardDialog
+        open={reservedCardDialogOpen}
+        card={selectedReservedCard}
+        onClose={handleCloseReservedCardDialog}
+        onPurchase={handlePurchaseReservedCard}
+        canPurchase={isCurrentPlayer} // Only allow purchase if it's the current player's turn
+      />
     </Paper>
   );
 };

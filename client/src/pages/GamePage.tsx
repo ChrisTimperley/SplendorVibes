@@ -76,6 +76,10 @@ const GamePage: React.FC = () => {
     }
   };
 
+  const handlePurchaseReservedCard = async (cardId: string) => {
+    await handleGameAction('purchase-reserved-card', { cardId });
+  };
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
@@ -165,6 +169,7 @@ const GamePage: React.FC = () => {
             <PlayerArea
               player={player}
               isCurrentPlayer={game.currentPlayerIndex === index}
+              onPurchaseReservedCard={player.id === currentPlayer ? handlePurchaseReservedCard : undefined}
             />
           </Box>
         ))}

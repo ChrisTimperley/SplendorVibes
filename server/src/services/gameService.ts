@@ -152,4 +152,15 @@ export class GameService {
     this.games.set(gameId, updatedGame);
     return updatedGame;
   }
+
+  async purchaseReservedCard(gameId: string, playerId: string, cardId: string, payment?: any): Promise<Game> {
+    const game = this.games.get(gameId);
+    if (!game) {
+      throw new Error('Game not found');
+    }
+
+    const updatedGame = this.gameEngine.purchaseReservedCard(game, playerId, cardId, payment);
+    this.games.set(gameId, updatedGame);
+    return updatedGame;
+  }
 }

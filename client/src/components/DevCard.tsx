@@ -47,7 +47,7 @@ export default function DevCard({
       {/* translucent frosted header overlay */}
       <Box sx={{
         position:"absolute", left:0, top:0, right:0, height:"25%",
-        background: "rgba(248, 250, 252, 0.35)",
+        background: "rgba(248, 250, 252, 0.2)",
         backdropFilter: "blur(8px)",
         borderBottom: "1px solid rgba(203, 213, 225, 0.3)"
       }}>
@@ -56,8 +56,8 @@ export default function DevCard({
           <Typography sx={{
             position:"absolute", top:12, left:12, zIndex:2,
             fontFamily:"Cinzel, serif", fontWeight:900, fontSize:36,
-            color:"#2d3748",
-            textShadow:"0 1px 2px rgba(255,255,255,.8)"
+            color:"#ffffffff",
+            textShadow:"0 1px 2px rgba(0, 0, 0, 0.8)"
           }}>{value}</Typography>
         )}
 

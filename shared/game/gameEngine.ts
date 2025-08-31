@@ -162,6 +162,58 @@ export class GameEngine {
     return game;
   }
 
+  purchaseReservedCard(game: Game, playerId: string, cardId: string, payment?: Partial<TokenBank>): Game {
+    const player = this.getPlayer(game, playerId);
+
+    if (!this.isPlayerTurn(game, playerId)) {
+      throw new Error('Not your turn');
+    }
+
+    // Find the card in the player's reserved cards
+    const cardIndex = player.reservedCards.findIndex(card => card.id === cardId);
+    if (cardIndex === -1) {
+      throw new Error('Card is not in your reserved cards');
+    }
+
+    const card = player.reservedCards[cardIndex];
+
+    // Calculate payment if not provided
+    if (!payment) {
+      payment = this.calculateMinimumPayment(player, card);
+    }
+
+    // Check if player can afford the card
+    if (!this.canAffordCard(player, card, payment)) {
+      throw new Error('Cannot afford this card');
+    }
+
+    // Pay for the card
+    this.payForCard(game, player, payment);
+
+    // Remove card from reserved cards
+    player.reservedCards.splice(cardIndex, 1);
+
+    // Add card to player's purchased cards
+    player.cards.push(card);
+    player.prestige += card.prestige;
+
+    // Check for noble visits
+    this.checkNobleVisits(game, player);
+
+    // Check for win condition
+    if (player.prestige >= 15) {
+      // Mark game as finished but don't end immediately
+      // The game will end after all players have had equal turns
+      game.state = GameState.FINISHED;
+      game.winner = player;
+    }
+
+    this.nextTurn(game);
+    game.updatedAt = new Date();
+
+    return game;
+  }
+
   private getPlayer(game: Game, playerId: string): Player {
     const player = game.players.find(p => p.id === playerId);
     if (!player) {
