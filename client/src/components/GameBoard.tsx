@@ -130,9 +130,11 @@ const GameBoard: React.FC<GameBoardProps> = ({
           sx={{
             mb: 3,
             fontFamily: '"Cinzel", serif',
-            fontWeight: 600,
-            color: colors.text.primary,
-            textAlign: 'center'
+            fontWeight: 700,
+            color: '#ffffff',
+            textAlign: 'center',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+            fontSize: '2.2rem'
           }}
         >
           Nobles
@@ -157,9 +159,11 @@ const GameBoard: React.FC<GameBoardProps> = ({
           sx={{
             mb: 4,
             fontFamily: '"Cinzel", serif',
-            fontWeight: 600,
-            color: colors.text.primary,
-            textAlign: 'center'
+            fontWeight: 700,
+            color: '#ffffff',
+            textAlign: 'center',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+            fontSize: '2.2rem'
           }}
         >
           Development Cards
@@ -173,9 +177,10 @@ const GameBoard: React.FC<GameBoardProps> = ({
                 fontFamily: '"Cinzel", serif',
                 fontWeight: 600,
                 mb: 3,
-                color: colors.primary.main,
+                color: '#ffffff',
                 textAlign: 'center',
-                fontSize: '1.5rem'
+                fontSize: '1.5rem',
+                textShadow: '1px 1px 3px rgba(0, 0, 0, 0.7)'
               }}
             >
               Tier {tier}
