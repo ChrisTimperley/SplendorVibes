@@ -85,84 +85,155 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, onPurc
         {player.prestige} Prestige Points
       </Typography>
 
-      {/* Tokens */}
+      {/* Buying Power */}
       <Typography variant="h6" sx={{
         mb: 1,
         color: 'white',
         fontWeight: 500,
         fontSize: '0.9rem',
       }}>
-        Tokens:
+        Buying Power:
       </Typography>
-      <Box sx={{ display: 'flex', gap: 0.5, mb: 2, flexWrap: 'wrap' }}>
-        {Object.entries(player.tokens).map(([gem, count]) => (
-          count > 0 && (
-            <Chip
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: 2 }}>
+        {(['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'] as GemType[]).map((gem) => {
+          const tokens = player.tokens[gem] || 0;
+          const bonuses = player.cards.filter(card => card.gemBonus === gem).length;
+          const total = tokens + bonuses;
+          
+          // Only show gems where the player has some buying power
+          if (total === 0) return null;
+          
+          return (
+            <Box
               key={gem}
-              size="small"
-              label={`${count}`}
               sx={{
-                bgcolor: gemColors[gem as GemType],
-                color: gem === 'diamond' || gem === 'gold' ? 'black' : 'white',
-                border: gem === 'diamond' ? '1px solid #ccc' : 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                p: 0.5,
                 borderRadius: `${borderRadius.sm}px`,
-                fontWeight: 600,
-                minWidth: 24,
-                height: 24,
-                fontSize: '0.75rem',
-                transition: animations.hover,
-                '&:hover': {
-                  transform: 'scale(1.05)',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
-                  cursor: 'default',
-                },
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
               }}
-            />
-          )
-        ))}
-      </Box>
-
-      {/* Card Bonuses */}
-      <Typography variant="h6" sx={{
-        mb: 1,
-        color: 'white',
-        fontWeight: 500,
-        fontSize: '0.9rem',
-      }}>
-        Card Bonuses:
-      </Typography>
-      <Box sx={{ display: 'flex', gap: 0.5, mb: 2, flexWrap: 'wrap' }}>
-        {Object.entries(
-          player.cards.reduce((acc, card) => {
-            acc[card.gemBonus] = (acc[card.gemBonus] || 0) + 1;
-            return acc;
-          }, {} as Record<string, number>)
-        ).map(([gem, count]) => (
-          <Chip
-            key={gem}
-            size="small"
-            label={`${count}`}
-            variant="outlined"
-            sx={{
-              borderColor: gemColors[gem as GemType],
-              color: gemColors[gem as GemType],
-              borderRadius: `${borderRadius.sm}px`,
-              borderWidth: 1.5,
-              fontWeight: 600,
-              minWidth: 24,
-              height: 24,
-              fontSize: '0.75rem',
-              transition: animations.hover,
-              '&:hover': {
-                borderColor: gemColors[gem as GemType],
-                backgroundColor: `${gemColors[gem as GemType]}15`,
-                transform: 'scale(1.05)',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
-                cursor: 'default',
-              }
-            }}
-          />
-        ))}
+            >
+              {/* Gem icon/color indicator */}
+              <Box
+                sx={{
+                  width: 16,
+                  height: 16,
+                  borderRadius: '50%',
+                  backgroundColor: gemColors[gem],
+                  border: gem === 'diamond' ? '1px solid #ccc' : 'none',
+                  flexShrink: 0,
+                }}
+              />
+              
+              {/* Gem name */}
+              <Typography
+                sx={{
+                  color: 'white',
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                  textTransform: 'capitalize',
+                  minWidth: 50,
+                  flexShrink: 0,
+                }}
+              >
+                {gem}
+              </Typography>
+              
+              {/* Total buying power with breakdown */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Typography
+                  sx={{
+                    color: colors.secondary.light,
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    minWidth: 20,
+                    textAlign: 'center',
+                  }}
+                >
+                  {total}
+                </Typography>
+                
+                {/* Breakdown in parentheses if both tokens and bonuses exist */}
+                {tokens > 0 && bonuses > 0 && (
+                  <Typography
+                    sx={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '0.7rem',
+                      fontWeight: 500,
+                    }}
+                  >
+                    ({tokens}+{bonuses})
+                  </Typography>
+                )}
+              </Box>
+              
+              {/* Visual breakdown: tokens + bonuses */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ml: 'auto' }}>
+                {tokens > 0 && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
+                    <Typography
+                      sx={{
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '0.6rem',
+                        fontWeight: 500,
+                      }}
+                    >
+                      T:
+                    </Typography>
+                    <Chip
+                      size="small"
+                      label={tokens}
+                      sx={{
+                        bgcolor: gemColors[gem],
+                        color: gem === 'diamond' || gem === 'gold' ? 'black' : 'white',
+                        fontWeight: 600,
+                        minWidth: 20,
+                        height: 16,
+                        fontSize: '0.6rem',
+                        '& .MuiChip-label': {
+                          px: 0.4,
+                        },
+                      }}
+                    />
+                  </Box>
+                )}
+                
+                {bonuses > 0 && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
+                    <Typography
+                      sx={{
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '0.6rem',
+                        fontWeight: 500,
+                      }}
+                    >
+                      C:
+                    </Typography>
+                    <Chip
+                      size="small"
+                      label={bonuses}
+                      variant="outlined"
+                      sx={{
+                        borderColor: gemColors[gem],
+                        color: gemColors[gem],
+                        fontWeight: 600,
+                        minWidth: 20,
+                        height: 16,
+                        fontSize: '0.6rem',
+                        borderWidth: 1.5,
+                        '& .MuiChip-label': {
+                          px: 0.4,
+                        },
+                      }}
+                    />
+                  </Box>
+                )}
+              </Box>
+            </Box>
+          );
+        })}
       </Box>
 
       {/* Reserved Cards */}
