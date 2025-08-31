@@ -51,13 +51,15 @@ export default function DevCard({
         backdropFilter: "blur(8px)",
         borderBottom: "1px solid rgba(203, 213, 225, 0.3)"
       }}>
-        {/* numeral */}
-        <Typography sx={{
-          position:"absolute", top:12, left:12, zIndex:2,
-          fontFamily:"Cinzel, serif", fontWeight:900, fontSize:36,
-          color:"#2d3748",
-          textShadow:"0 1px 2px rgba(255,255,255,.8)"
-        }}>{value}</Typography>
+        {/* numeral - only show if value >= 1 */}
+        {value >= 1 && (
+          <Typography sx={{
+            position:"absolute", top:12, left:12, zIndex:2,
+            fontFamily:"Cinzel, serif", fontWeight:900, fontSize:36,
+            color:"#2d3748",
+            textShadow:"0 1px 2px rgba(255,255,255,.8)"
+          }}>{value}</Typography>
+        )}
 
         {/* bonus jewel */}
         <Box sx={{
