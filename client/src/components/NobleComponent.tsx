@@ -1,132 +1,180 @@
 import React from 'react';
-import { Paper, Typography, Box } from '@mui/material';
+import { Paper, Box, Typography } from '@mui/material';
 import { Noble, GemType } from '../../../shared/types/game';
-import { borderRadius, colors } from '../theme';
 import { gemColors } from '../constants/gemColors';
 
 interface NobleComponentProps {
   noble: Noble;
 }
 
+// Square cost pip component for nobles
+const SquareCostPip: React.FC<{ gem: GemType; count: number }> = ({ gem, count }) => {
+  const gemColor = gemColors[gem];
+
+  return (
+    <Box
+      sx={{
+        width: 28,
+        height: 28,
+        backgroundColor: gemColor,
+        border: '1px solid rgba(0,0,0,0.2)',
+        borderRadius: '6px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '0.85rem',
+        fontWeight: 'bold',
+        color: gem === 'diamond' ? '#333' :
+               gem === 'gold' ? '#000' :
+               gem === 'onyx' ? '#fff' : 'white',
+        textShadow: gem === 'diamond' || gem === 'gold' ? 'none' : '0 1px 2px rgba(0,0,0,0.3)',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3)'
+      }}
+    >
+      {count}
+    </Box>
+  );
+};
+
 const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
+  // Get portrait URL (placeholder for now)
+  const portraitUrl = `/noble-portraits/${noble.name.toLowerCase().replace(/\s+/g, '-')}.jpg`;
+
   return (
     <Paper
-      elevation={0}
+      elevation={6}
       sx={{
-        width: 180,
-        height: 140,
-        p: 2,
-        display: 'flex',
-        flexDirection: 'column',
-        background: `linear-gradient(135deg, ${colors.secondary.main} 0%, ${colors.secondary.light} 100%)`,
-        border: `2px solid ${colors.secondary.dark}`,
-        borderRadius: `${borderRadius.xl}px`,
         position: 'relative',
-        boxShadow: '0 6px 20px rgba(218, 165, 32, 0.25), 0 3px 8px rgba(218, 165, 32, 0.15)',
+        width: 220, // Match development card width
+        height: 180, // Shorter than dev cards
+        borderRadius: 2,
+        overflow: 'hidden',
+        background: '#fff',
+        border: '2px solid #cbd5e1',
+        boxShadow: '0 10px 25px rgba(0,0,0,.15), 0 4px 10px rgba(0,0,0,.1)',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        cursor: 'pointer',
         '&:hover': {
-          transform: 'translateY(-2px)',
-          boxShadow: '0 8px 28px rgba(218, 165, 32, 0.3), 0 4px 12px rgba(218, 165, 32, 0.2)',
-          transition: 'all 0.3s ease'
+          transform: 'translateY(-6px) scale(1.02)',
+          boxShadow: '0 20px 40px rgba(0,0,0,.2), 0 8px 16px rgba(0,0,0,.15)',
+          borderColor: '#94a3b8'
+        },
+        '&:before': { // laminated inner border
+          content: '""',
+          position: 'absolute',
+          inset: 3,
+          borderRadius: 1,
+          boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.8), inset 0 1px 0 rgba(255,255,255,.9)'
         }
       }}
     >
-      {/* Prestige Points */}
+      {/* Portrait artwork area - full card background */}
       <Box
         sx={{
           position: 'absolute',
-          top: -1,
-          right: -1,
-          width: 32,
-          height: 32,
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          background: `linear-gradient(135deg, #8b4513 0%, #654321 100%)`, // Fallback
+          backgroundImage: `url(${portraitUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'saturate(1.1) contrast(1.1)',
+          // Fallback placeholder pattern
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            inset: 0,
+            background: `linear-gradient(135deg, rgba(139, 69, 19, 0.3) 0%, rgba(101, 67, 33, 0.3) 100%)`,
+            backgroundImage: `radial-gradient(circle at center, rgba(245, 245, 220, 0.2) 0%, transparent 70%)`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }
+        }}
+      />
+
+      {/* Placeholder portrait icon when image fails to load */}
+      <Box
+        sx={{
+          position: 'absolute',
+          right: '15%', // Better positioning in the portrait area
+          top: '50%',
+          transform: 'translateY(-50%)',
+          width: 70,
+          height: 70,
           borderRadius: '50%',
-          background: `linear-gradient(135deg, ${colors.primary.main} 0%, ${colors.primary.dark} 100%)`,
-          border: `2px solid ${colors.primary.dark}`,
-          color: 'white',
+          background: 'rgba(139, 69, 19, 0.8)',
+          border: '3px solid rgba(245, 245, 220, 0.6)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '0.9rem',
+          color: '#f5f5dc',
+          fontSize: '1.8rem',
+          fontFamily: '"Cinzel", serif',
           fontWeight: 'bold',
-          boxShadow: '0 3px 8px rgba(139, 69, 19, 0.4)',
-          zIndex: 10
+          textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+          zIndex: 1,
+          boxShadow: '0 4px 8px rgba(0,0,0,0.3)'
         }}
       >
-        {noble.prestige}
+        {noble.name.charAt(0)}
       </Box>
 
-      {/* Noble Name */}
-      <Typography
-        variant="h5"
+      {/* Vertical frosted panel on the left */}
+      <Box
         sx={{
-          fontSize: '0.95rem',
-          fontWeight: 600,
-          color: 'black',
-          textAlign: 'center',
-          mb: 1.5,
-          lineHeight: 1.3,
-          fontFamily: '"Cinzel", serif'
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: '35%', // Slightly wider for better proportion
+          background: 'rgba(248, 250, 252, 0.35)',
+          backdropFilter: 'blur(8px)',
+          borderRight: '1px solid rgba(203, 213, 225, 0.3)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          py: 2,
+          px: 1,
+          zIndex: 2
         }}
       >
-        {noble.name}
-      </Typography>
+        {/* Prestige points at top */}
+        <Typography
+          sx={{
+            fontFamily: 'Cinzel, serif',
+            fontWeight: 900,
+            fontSize: 32, // Larger to match dev cards better
+            color: '#2d3748',
+            textShadow: '0 1px 2px rgba(255,255,255,.8)',
+            lineHeight: 1,
+            mb: 2
+          }}
+        >
+          {noble.prestige}
+        </Typography>
 
-      {/* Requirements */}
-      <Typography
-        variant="body2"
-        sx={{
-          fontSize: '0.75rem',
-          fontWeight: 600,
-          color: colors.primary.dark,
-          textAlign: 'center',
-          mb: 1,
-          textTransform: 'uppercase',
-          letterSpacing: 0.5,
-          fontFamily: '"Inter", sans-serif'
-        }}
-      >
-        Requirements
-      </Typography>
-
-      <Box sx={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: 0.5,
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}>
-        {Object.entries(noble.requirements).map(([gem, count]) => (
-          <Box
-            key={gem}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 0.5,
-              bgcolor: gemColors[gem as GemType] || colors.divider,
-              color: gem === 'diamond' ? '#333' :
-                     gem === 'gold' ? '#000' :
-                     gem === 'onyx' ? '#fff' : 'white',
-              borderRadius: `${borderRadius.sm}px`,
-              px: 1,
-              py: 0.5,
-              fontSize: '0.75rem',
-              fontWeight: 'bold',
-              minHeight: 20,
-              boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
-              background: `linear-gradient(90deg, ${gemColors[gem as GemType] || colors.divider} 0%, ${gemColors[gem as GemType] || colors.divider}dd 100%)`
-            }}
-          >
-            <Box
-              sx={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                bgcolor: 'rgba(255,255,255,0.5)',
-                border: '1px solid rgba(255,255,255,0.7)'
-              }}
+        {/* Square cost pips in vertical column */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 0.75, // Slightly more spacing
+            alignItems: 'center',
+            width: '100%'
+          }}
+        >
+          {Object.entries(noble.requirements).map(([gem, count]) => (
+            <SquareCostPip
+              key={gem}
+              gem={gem as GemType}
+              count={count}
             />
-            {count}
-          </Box>
-        ))}
+          ))}
+        </Box>
       </Box>
     </Paper>
   );

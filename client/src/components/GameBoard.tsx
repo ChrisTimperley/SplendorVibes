@@ -223,7 +223,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         </Typography>
         <Box sx={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+          gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize.width}px, 1fr))`,
           gap: 2,
           justifyItems: 'center',
           px: 2
