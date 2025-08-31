@@ -151,7 +151,7 @@ const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
           left: 0,
           top: 0,
           bottom: 0,
-          width: '35%', // Slightly wider for better proportion
+          width: '25%',
           background: 'rgba(248, 250, 252, 0.35)',
           backdropFilter: 'blur(8px)',
           borderRight: '1px solid rgba(203, 213, 225, 0.3)',
@@ -169,9 +169,9 @@ const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
           sx={{
             fontFamily: 'Cinzel, serif',
             fontWeight: 900,
-            fontSize: 32, // Larger to match dev cards better
-            color: '#2d3748',
-            textShadow: '0 1px 2px rgba(255,255,255,.8)',
+            fontSize: 42, // Larger to match dev cards better
+            color: '#ffffffff',
+            textShadow: '0 1px 2px rgba(0, 0, 0, 0.8)',
             lineHeight: 1,
             mb: 2
           }}
