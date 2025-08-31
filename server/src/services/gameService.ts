@@ -81,6 +81,8 @@ export class GameService {
 
     if (game.players.length >= 2) {
       game.state = GameState.IN_PROGRESS;
+      // Reinitialize board with correct player count
+      game.board = this.gameEngine.initializeBoard(game.players.length);
       // Update nobles based on final player count
       this.gameEngine.updateNoblesForPlayerCount(game);
     }

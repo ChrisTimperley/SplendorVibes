@@ -15,6 +15,16 @@ export class GameEngine {
     const tier2Cards = allCards.filter(card => card.tier === 2);
     const tier3Cards = allCards.filter(card => card.tier === 3);
 
+    // Determine token count based on player count
+    let tokenCount = 7; // Default for 4 players
+    if (playerCount === 2) {
+      tokenCount = 4;
+    } else if (playerCount === 3) {
+      tokenCount = 5;
+    } else if (playerCount === 4) {
+      tokenCount = 7;
+    }
+
     return {
       availableCards: {
         tier1: tier1Cards.splice(0, 4),
@@ -28,11 +38,11 @@ export class GameEngine {
       },
       nobles: [], // Nobles will be set when game starts
       tokens: {
-        diamond: 7,
-        sapphire: 7,
-        emerald: 7,
-        ruby: 7,
-        onyx: 7,
+        diamond: tokenCount,
+        sapphire: tokenCount,
+        emerald: tokenCount,
+        ruby: tokenCount,
+        onyx: tokenCount,
         gold: 5
       }
     };
