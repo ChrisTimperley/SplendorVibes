@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Typography } from '@mui/material';
-import { Game } from '../../../shared/types/game';
+import { Box, Typography, Dialog, DialogTitle, DialogContent, Button, Paper } from '@mui/material';
+import { Game, GameState } from '../../../shared/types/game';
 import { gameService } from '../services/gameService';
 import { socketService } from '../services/socketService';
 import GameBoard from '../components/GameBoard';
 import PlayerArea from '../components/PlayerArea';
 import GameActions from '../components/GameActions';
+import { colors, borderRadius } from '../theme';
 
 const GamePage: React.FC = () => {
   const { gameId } = useParams<{ gameId: string }>();
@@ -14,6 +15,7 @@ const GamePage: React.FC = () => {
   const [currentPlayer, setCurrentPlayer] = useState<string | null>(null);
   const [selectedTokens, setSelectedTokens] = useState<any>({});
   const [loading, setLoading] = useState(true);
+  const [showGameOverDialog, setShowGameOverDialog] = useState(false);
 
   useEffect(() => {
     if (!gameId) return;
@@ -56,8 +58,20 @@ const GamePage: React.FC = () => {
     };
   }, [gameId]);
 
+  // Check for game completion
+  useEffect(() => {
+    if (game && game.state === GameState.FINISHED && !showGameOverDialog) {
+      setShowGameOverDialog(true);
+    }
+  }, [game, showGameOverDialog]);
+
   const handleGameAction = async (action: string, payload: any) => {
     if (!game || !gameId || !currentPlayer) return;
+    
+    // Prevent actions if game is finished
+    if (game.state === GameState.FINISHED) {
+      return;
+    }
 
     try {
       // Add playerId to all payloads
@@ -78,6 +92,23 @@ const GamePage: React.FC = () => {
 
   const handlePurchaseReservedCard = async (cardId: string) => {
     await handleGameAction('purchase-reserved-card', { cardId });
+  };
+
+  const handleCloseGameOverDialog = () => {
+    setShowGameOverDialog(false);
+  };
+
+  const isPlayerWinner = (playerId: string): boolean => {
+    return game?.winner?.id === playerId;
+  };
+
+  const getGameOverMessage = (): string => {
+    if (!game?.winner) return 'Game Over';
+    if (isPlayerWinner(currentPlayer || '')) {
+      return 'Congratulations! You Won!';
+    } else {
+      return `Game Over - ${game.winner.name} Wins!`;
+    }
   };
 
   if (loading) {
@@ -115,9 +146,9 @@ const GamePage: React.FC = () => {
       <Box sx={{ minWidth: 0 }}>
         <GameBoard
           board={game.board}
-          onCardAction={handleGameAction}
+          onCardAction={game.state === GameState.FINISHED ? () => {} : handleGameAction}
           selectedTokens={selectedTokens}
-          onTokenSelectionChange={setSelectedTokens}
+          onTokenSelectionChange={game.state === GameState.FINISHED ? () => {} : setSelectedTokens}
         />
       </Box>
 
@@ -179,10 +210,164 @@ const GamePage: React.FC = () => {
           selectedTokens={selectedTokens}
           onAction={handleGameAction}
           isCurrentPlayerTurn={
-            Boolean(currentPlayer && game.players[game.currentPlayerIndex]?.id === currentPlayer)
+            Boolean(currentPlayer && game.players[game.currentPlayerIndex]?.id === currentPlayer && game.state !== GameState.FINISHED)
           }
         />
       </Box>
+
+      {/* Game Over Dialog */}
+      {game && showGameOverDialog && (
+        <Dialog
+          open={showGameOverDialog}
+          onClose={handleCloseGameOverDialog}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{
+            sx: {
+              background: `linear-gradient(135deg, ${colors.background.parchment} 0%, ${colors.background.card} 100%)`,
+              border: `2px solid ${colors.divider}`,
+              borderRadius: `${borderRadius.xl}px`,
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+            }
+          }}
+        >
+          <DialogTitle
+            sx={{
+              fontFamily: '"Cinzel", serif',
+              fontWeight: 700,
+              color: colors.text.primary,
+              textAlign: 'center',
+              fontSize: '2rem',
+              pb: 2
+            }}
+          >
+            {getGameOverMessage()}
+          </DialogTitle>
+
+          <DialogContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, pb: 4 }}>
+            {/* Winner's Info */}
+            {game.winner && (
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 3,
+                  background: isPlayerWinner(currentPlayer || '') 
+                    ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)'
+                    : 'linear-gradient(135deg, #C0C0C0 0%, #808080 100%)',
+                  borderRadius: `${borderRadius.lg}px`,
+                  textAlign: 'center',
+                  width: '100%'
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  sx={{
+                    fontFamily: '"Cinzel", serif',
+                    fontWeight: 700,
+                    color: '#000',
+                    mb: 1
+                  }}
+                >
+                  {game.winner.name}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: '#000',
+                    fontWeight: 600
+                  }}
+                >
+                  {game.winner.prestige} Prestige Points
+                </Typography>
+              </Paper>
+            )}
+
+            {/* Final Standings */}
+            <Box sx={{ width: '100%' }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontFamily: '"Cinzel", serif',
+                  fontWeight: 600,
+                  color: colors.text.primary,
+                  textAlign: 'center',
+                  mb: 2
+                }}
+              >
+                Final Standings
+              </Typography>
+              
+              {game.players
+                .sort((a, b) => b.prestige - a.prestige)
+                .map((player, index) => (
+                  <Box
+                    key={player.id}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      p: 2,
+                      mb: 1,
+                      backgroundColor: player.id === currentPlayer 
+                        ? 'rgba(255, 215, 0, 0.1)' 
+                        : 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: `${borderRadius.md}px`,
+                      border: `1px solid ${colors.divider}`
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: 600,
+                          color: colors.text.primary,
+                          minWidth: '24px'
+                        }}
+                      >
+                        #{index + 1}
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          fontWeight: 500,
+                          color: player.id === currentPlayer ? colors.secondary.light : colors.text.primary
+                        }}
+                      >
+                        {player.id === currentPlayer ? 'You' : player.name}
+                      </Typography>
+                    </Box>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: 600,
+                        color: colors.text.primary
+                      }}
+                    >
+                      {player.prestige} pts
+                    </Typography>
+                  </Box>
+                ))}
+            </Box>
+
+            <Button
+              onClick={handleCloseGameOverDialog}
+              variant="contained"
+              sx={{
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 600,
+                backgroundColor: colors.primary.main,
+                '&:hover': {
+                  backgroundColor: colors.primary.dark
+                },
+                px: 4,
+                py: 1.5
+              }}
+            >
+              Close
+            </Button>
+          </DialogContent>
+        </Dialog>
+      )}
     </Box>
   );
 };

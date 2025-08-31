@@ -69,6 +69,8 @@ export interface Game {
   state: GameState;
   board: GameBoard;
   winner?: Player;
+  endTriggered?: boolean;
+  endTriggerPlayerIndex?: number;
   createdAt: Date;
   updatedAt: Date;
 }

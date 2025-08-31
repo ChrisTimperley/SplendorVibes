@@ -118,11 +118,24 @@ export class GameEngine {
 
     // Check win condition
     if (player.prestige >= 15) {
-      game.state = GameState.FINISHED;
-      game.winner = player;
+      // Mark that someone triggered the end game condition
+      if (!game.endTriggered) {
+        game.endTriggered = true;
+        game.endTriggerPlayerIndex = game.currentPlayerIndex;
+      }
     }
 
     this.nextTurn(game);
+
+    // Check if the game should end (everyone has had equal turns since end condition was triggered)
+    if (game.endTriggered && game.currentPlayerIndex === game.endTriggerPlayerIndex) {
+      game.state = GameState.FINISHED;
+      // Find the player with the highest prestige
+      const winner = game.players.reduce((prev, current) => 
+        current.prestige > prev.prestige ? current : prev
+      );
+      game.winner = winner;
+    }
     game.updatedAt = new Date();
 
     return game;
@@ -202,13 +215,25 @@ export class GameEngine {
 
     // Check for win condition
     if (player.prestige >= 15) {
-      // Mark game as finished but don't end immediately
-      // The game will end after all players have had equal turns
-      game.state = GameState.FINISHED;
-      game.winner = player;
+      // Mark that someone triggered the end game condition
+      if (!game.endTriggered) {
+        game.endTriggered = true;
+        game.endTriggerPlayerIndex = game.currentPlayerIndex;
+      }
     }
 
     this.nextTurn(game);
+
+    // Check if the game should end (everyone has had equal turns since end condition was triggered)
+    if (game.endTriggered && game.currentPlayerIndex === game.endTriggerPlayerIndex) {
+      game.state = GameState.FINISHED;
+      // Find the player with the highest prestige
+      const winner = game.players.reduce((prev, current) => 
+        current.prestige > prev.prestige ? current : prev
+      );
+      game.winner = winner;
+    }
+
     game.updatedAt = new Date();
 
     return game;
