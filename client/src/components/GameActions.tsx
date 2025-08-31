@@ -53,20 +53,15 @@ const GameActions: React.FC<GameActionsProps> = ({ selectedTokens, onAction, isC
   };
 
   return (
-    <Box>
+    <Box sx={{ mt: 2 }}>
       <Box
         sx={{
-          position: 'fixed',
-          bottom: 3,
-          left: '50%',
-          transform: 'translateX(-50%)',
           display: 'flex',
           gap: 2,
-          bgcolor: 'background.paper',
-          p: 3,
-          borderRadius: `${borderRadius.xl}px`,
-          boxShadow: '0 8px 32px rgba(44, 24, 16, 0.15), 0 4px 16px rgba(44, 24, 16, 0.1)',
-          border: '1px solid rgba(232, 213, 183, 0.3)'
+          bgcolor: 'rgba(255, 255, 255, 0.1)',
+          p: 2,
+          borderRadius: `${borderRadius.lg}px`,
+          border: '1px solid rgba(255, 255, 255, 0.15)'
         }}
       >
         <Button
@@ -75,9 +70,9 @@ const GameActions: React.FC<GameActionsProps> = ({ selectedTokens, onAction, isC
           disabled={!canTakeTokens()}
           aria-label={!isCurrentPlayerTurn ? 'Wait for your turn to take tokens' : `Take selected tokens`}
           sx={{
-            minWidth: 180,
+            width: '100%',
             height: 48,
-            fontSize: '0.95rem',
+            fontSize: '0.9rem',
             fontWeight: 600,
             transition: animations.focus,
             '&:focus-visible': {

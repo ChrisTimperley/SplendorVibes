@@ -82,9 +82,11 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
         sx={{
           mb: 3,
           fontFamily: '"Cinzel", serif',
-          fontWeight: 600,
-          color: colors.text.primary,
-          textAlign: 'center'
+          fontWeight: 700,
+          color: '#ffffff',
+          textAlign: 'center',
+          textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+          fontSize: '1.8rem'
         }}
       >
         Token Bank
