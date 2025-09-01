@@ -90,9 +90,9 @@ const HomePage: React.FC = () => {
             sx={{ 
               p: 4, 
               mb: 3,
-              background: 'rgba(0, 0, 0, 0.4)',
+              background: 'rgba(0, 0, 0, 0.6)', // Increased opacity for better contrast
               backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)', // Increased border opacity
               borderRadius: 2
             }}
           >
@@ -116,6 +116,7 @@ const HomePage: React.FC = () => {
             sx={{ 
               mb: 3,
               '& .MuiOutlinedInput-root': {
+                backgroundColor: 'rgba(255, 255, 255, 0.1)', // Add background for visibility
                 color: 'white',
                 '& fieldset': {
                   borderColor: 'rgba(255, 255, 255, 0.3)',
@@ -126,15 +127,25 @@ const HomePage: React.FC = () => {
                 '&.Mui-focused fieldset': {
                   borderColor: '#FFD700',
                 },
+                '& input': {
+                  color: 'white', // Ensure input text is white
+                  '&::placeholder': {
+                    color: 'rgba(255, 255, 255, 0.5)',
+                  }
+                }
               },
               '& .MuiInputLabel-root': {
                 color: 'rgba(255, 255, 255, 0.7)',
                 '&.Mui-focused': {
                   color: '#FFD700',
                 },
+                '&.MuiInputLabel-shrink': {
+                  color: 'rgba(255, 255, 255, 0.9)', // Make floating label more visible
+                },
               },
             }}
             variant="outlined"
+            placeholder="Enter your name here"
           />
 
           <Grid container spacing={2}>
@@ -197,9 +208,9 @@ const HomePage: React.FC = () => {
           elevation={0} 
           sx={{ 
             p: 4,
-            background: 'rgba(0, 0, 0, 0.4)',
+            background: 'rgba(0, 0, 0, 0.6)', // Increased opacity for better contrast
             backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.2)', // Increased border opacity
             borderRadius: 2
           }}
         >
