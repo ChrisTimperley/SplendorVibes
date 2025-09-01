@@ -85,23 +85,64 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, onPurc
         {player.prestige} Prestige Points
       </Typography>
 
-      {/* Buying Power */}
-      <Typography variant="h6" sx={{
-        mb: 0.75, // Reduced from 1
-        color: 'white',
-        fontWeight: 500,
-        fontSize: '0.85rem', // Reduced from 0.9rem
-      }}>
-        Buying Power:
-      </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: 1.5 }}> {/* Reduced from 2 */}
+      {/* Token row */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5, mb: 1 }}>
         {(['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'] as GemType[]).map((gem) => {
           const tokens = player.tokens[gem] || 0;
-          const bonuses = player.cards.filter(card => card.gemBonus === gem).length;
-          const total = tokens + bonuses;
           
-          // Only show gems where the player has some buying power
-          if (total === 0) return null;
+          // Only show gems where the player has tokens
+          if (tokens === 0) return null;
+          
+          return (
+            <Box key={gem} sx={{ textAlign: 'center' }}>
+              <Box
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  background: `
+                    radial-gradient(circle at 30% 30%,
+                      ${gemColors[gem]}E6 0%,
+                      ${gemColors[gem]} 60%,
+                      ${gemColors[gem]}CC 100%
+                    )
+                  `,
+                  boxShadow: `
+                    inset 1px 1px 2px rgba(255, 255, 255, 0.4),
+                    inset -1px -1px 2px rgba(0, 0, 0, 0.2),
+                    0 2px 4px rgba(0, 0, 0, 0.15)
+                  `,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: gem === 'diamond' ? '1px solid #ccc' : 'none',
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold',
+                    color: gem === 'diamond' || gem === 'gold' ? 'black' : 'white',
+                    lineHeight: 1,
+                    textShadow: '0 1px 1px rgba(0, 0, 0, 0.3)',
+                    userSelect: 'none'
+                  }}
+                >
+                  {tokens}
+                </Typography>
+              </Box>
+            </Box>
+          );
+        })}
+      </Box>
+      
+      {/* Card bonuses row */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5, mb: 1.5, flexWrap: 'wrap' }}>
+        {(['diamond', 'sapphire', 'emerald', 'ruby', 'onyx'] as GemType[]).map((gem) => {
+          const bonuses = player.cards.filter(card => card.gemBonus === gem).length;
+          
+          // Only show gems where the player has card bonuses
+          if (bonuses === 0) return null;
           
           return (
             <Box
@@ -109,17 +150,19 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, onPurc
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 1,
-                p: 0.5,
+                gap: 0.3,
+                px: 0.5,
+                py: 0.2,
                 borderRadius: `${borderRadius.sm}px`,
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                border: `1px solid ${gemColors[gem]}`,
               }}
             >
-              {/* Gem icon/color indicator */}
+              {/* Small gem indicator */}
               <Box
                 sx={{
-                  width: 16,
-                  height: 16,
+                  width: 8,
+                  height: 8,
                   borderRadius: '50%',
                   backgroundColor: gemColors[gem],
                   border: gem === 'diamond' ? '1px solid #ccc' : 'none',
@@ -127,110 +170,17 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, onPurc
                 }}
               />
               
-              {/* Gem name */}
+              {/* Bonus text */}
               <Typography
                 sx={{
-                  color: 'white',
-                  fontSize: '0.75rem',
-                  fontWeight: 500,
-                  textTransform: 'capitalize',
-                  minWidth: 50,
-                  flexShrink: 0,
+                  color: gemColors[gem],
+                  fontSize: '0.65rem',
+                  fontWeight: 600,
+                  lineHeight: 1,
                 }}
               >
-                {gem}
+                +{bonuses}
               </Typography>
-              
-              {/* Total buying power with breakdown */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <Typography
-                  sx={{
-                    color: colors.secondary.light,
-                    fontSize: '0.9rem',
-                    fontWeight: 700,
-                    minWidth: 20,
-                    textAlign: 'center',
-                  }}
-                >
-                  {total}
-                </Typography>
-                
-                {/* Breakdown in parentheses if both tokens and bonuses exist */}
-                {tokens > 0 && bonuses > 0 && (
-                  <Typography
-                    sx={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontSize: '0.7rem',
-                      fontWeight: 500,
-                    }}
-                  >
-                    ({tokens}+{bonuses})
-                  </Typography>
-                )}
-              </Box>
-              
-              {/* Visual breakdown: tokens + bonuses */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ml: 'auto' }}>
-                {tokens > 0 && (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
-                    <Typography
-                      sx={{
-                        color: 'rgba(255, 255, 255, 0.6)',
-                        fontSize: '0.6rem',
-                        fontWeight: 500,
-                      }}
-                    >
-                      T:
-                    </Typography>
-                    <Chip
-                      size="small"
-                      label={tokens}
-                      sx={{
-                        bgcolor: gemColors[gem],
-                        color: gem === 'diamond' || gem === 'gold' ? 'black' : 'white',
-                        fontWeight: 600,
-                        minWidth: 20,
-                        height: 16,
-                        fontSize: '0.6rem',
-                        '& .MuiChip-label': {
-                          px: 0.4,
-                        },
-                      }}
-                    />
-                  </Box>
-                )}
-                
-                {bonuses > 0 && (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
-                    <Typography
-                      sx={{
-                        color: 'rgba(255, 255, 255, 0.6)',
-                        fontSize: '0.6rem',
-                        fontWeight: 500,
-                      }}
-                    >
-                      C:
-                    </Typography>
-                    <Chip
-                      size="small"
-                      label={bonuses}
-                      variant="outlined"
-                      sx={{
-                        borderColor: gemColors[gem],
-                        color: gemColors[gem],
-                        fontWeight: 600,
-                        minWidth: 20,
-                        height: 16,
-                        fontSize: '0.6rem',
-                        borderWidth: 1.5,
-                        '& .MuiChip-label': {
-                          px: 0.4,
-                        },
-                      }}
-                    />
-                  </Box>
-                )}
-              </Box>
             </Box>
           );
         })}
