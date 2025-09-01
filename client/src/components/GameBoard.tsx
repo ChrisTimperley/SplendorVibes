@@ -224,20 +224,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
         {/* Nobles Section */}
         <Box>
-          <Typography
-            variant="h2"
-            sx={{
-              mb: 2, // Reduced from 3
-              fontFamily: '"Cinzel", serif',
-              fontWeight: 700,
-              color: '#ffffff',
-              textAlign: 'center',
-              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-              fontSize: '2rem' // Reduced from 2.2rem
-            }}
-          >
-            Nobles
-          </Typography>
           <Box sx={{
             display: 'grid',
             gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize.width}px, 1fr))`,
