@@ -41,17 +41,16 @@ const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
   // To add new artwork: place noble_X.png files in public/noble-art/ and add mapping below
   const getNobleArtUrl = (nobleId: string): string | null => {
     const artMapping: Record<string, string> = {
-      'noble_1': '/noble-art/noble_1.png', // Catherine de' Medici
-      // Add more mappings as artwork becomes available:
-      // 'noble_2': '/noble-art/noble_2.png', // Elisabeth of Austria
-      // 'noble_3': '/noble-art/noble_3.png', // Isabella I of Castile
-      // 'noble_4': '/noble-art/noble_4.png', // Niccolò Machiavelli
-      // 'noble_5': '/noble-art/noble_5.png', // Suleiman the Magnificent
-      // 'noble_6': '/noble-art/noble_6.png', // Anne of Brittany
-      // 'noble_7': '/noble-art/noble_7.png', // Charles V
-      // 'noble_8': '/noble-art/noble_8.png', // Francis I of France
-      // 'noble_9': '/noble-art/noble_9.png', // Henry VIII
-      // 'noble_10': '/noble-art/noble_10.png', // Mary Stuart
+      'noble_1': '/noble-art/noble_1.png',
+      'noble_2': '/noble-art/noble_2.png',
+      'noble_3': '/noble-art/noble_3.png',
+      'noble_4': '/noble-art/noble_4.png',
+      'noble_5': '/noble-art/noble_5.png',
+      'noble_6': '/noble-art/noble_6.png',
+      'noble_7': '/noble-art/noble_7.png',
+      'noble_8': '/noble-art/noble_8.png',
+      'noble_9': '/noble-art/noble_9.png',
+      'noble_10': '/noble-art/noble_10.png',
     };
     return artMapping[nobleId] || null;
   };
