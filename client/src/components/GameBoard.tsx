@@ -204,10 +204,10 @@ const GameBoard: React.FC<GameBoardProps> = ({
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1.5 }}>
       {/* Token Bank Section - Left Side */}
       <Box sx={{ 
-        width: '200px', 
+        width: '140px', 
         flexShrink: 0,
         position: 'sticky',
         top: 0,
@@ -221,32 +221,30 @@ const GameBoard: React.FC<GameBoardProps> = ({
       </Box>
 
       {/* Main Game Content - Right Side */}
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
         {/* Nobles Section */}
-        <Box>
-          <Box sx={{
-            display: 'grid',
-            gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize.width}px, 1fr))`,
-            gap: 1.2, // Further reduced for smaller cards
-            justifyItems: 'center',
-            px: 1.2 // Further reduced for smaller cards
-          }}>
-            {board.nobles.map((noble) => (
-              <NobleComponent key={noble.id} noble={noble} />
-            ))}
-          </Box>
+        <Box sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '8px',
+          justifyContent: 'center',
+          px: 0.5
+        }}>
+          {board.nobles.map((noble) => (
+            <NobleComponent key={noble.id} noble={noble} />
+          ))}
         </Box>
 
         {/* Development Cards Section */}
         <Box>
           {[3, 2, 1].map((tier) => (
-            <Box key={tier} sx={{ mb: 2 }}>
+            <Box key={tier} sx={{ mb: 1.5 }}>
               <Box sx={{
-                display: 'grid',
-                gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize.width}px, 1fr))`,
-                gap: 1.2,
-                justifyItems: 'center',
-                px: 1.2
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '8px',
+                justifyContent: 'center',
+                px: 0.5
               }}>
                 {board.availableCards[`tier${tier}` as keyof typeof board.availableCards].map((card) => (
                   <GameCard
