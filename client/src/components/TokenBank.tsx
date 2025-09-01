@@ -218,7 +218,6 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
                   variant="caption"
                   sx={{ mt: 0.5, fontSize: '0.7rem', color: 'rgba(255,255,255,.55)', fontStyle: 'italic' }}
                 >
-                  (Wildcard)
                 </Typography>
               )}
             </Box>
