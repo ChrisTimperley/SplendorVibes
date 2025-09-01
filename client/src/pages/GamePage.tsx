@@ -1,6 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Box, Typography, Dialog, DialogTitle, DialogContent, Button, Paper } from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
+import { 
+  Box, 
+  Typography, 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogActions,
+  DialogContentText,
+  Button, 
+  Paper,
+  IconButton,
+  Tooltip
+} from '@mui/material';
+import { ExitToApp } from '@mui/icons-material';
 import { Game, GameState } from '../../../shared/types/game';
 import { gameService } from '../services/gameService';
 import { socketService } from '../services/socketService';
@@ -11,11 +24,15 @@ import { colors, borderRadius } from '../theme';
 
 const GamePage: React.FC = () => {
   const { gameId } = useParams<{ gameId: string }>();
+  const navigate = useNavigate();
   const [game, setGame] = useState<Game | null>(null);
   const [currentPlayer, setCurrentPlayer] = useState<string | null>(null);
   const [selectedTokens, setSelectedTokens] = useState<any>({});
   const [loading, setLoading] = useState(true);
   const [showGameOverDialog, setShowGameOverDialog] = useState(false);
+  const [endGameDialogOpen, setEndGameDialogOpen] = useState(false);
+  const [isEndingGame, setIsEndingGame] = useState(false);
+  const [gameTerminatedDialog, setGameTerminatedDialog] = useState(false);
 
   useEffect(() => {
     if (!gameId) return;
@@ -42,6 +59,13 @@ const GamePage: React.FC = () => {
         // Listen for game updates
         socketService.onGameStateUpdate((updatedGame: Game) => {
           setGame(updatedGame);
+          
+          // Check if game was terminated by another player
+          if (updatedGame.state === GameState.FINISHED && 
+              updatedGame.endReason === 'terminated' && 
+              updatedGame.endedBy !== currentPlayer) {
+            setGameTerminatedDialog(true);
+          }
         });
 
       } catch (error) {
@@ -96,6 +120,35 @@ const GamePage: React.FC = () => {
 
   const handleCloseGameOverDialog = () => {
     setShowGameOverDialog(false);
+  };
+
+  const handleEndGame = async () => {
+    if (!gameId || !currentPlayer) return;
+    
+    setIsEndingGame(true);
+    try {
+      await gameService.endGame(gameId, currentPlayer);
+      navigate('/');
+    } catch (error) {
+      console.error('Error ending game:', error);
+      // TODO: Show error message to user
+    } finally {
+      setIsEndingGame(false);
+      setEndGameDialogOpen(false);
+    }
+  };
+
+  const openEndGameDialog = () => {
+    setEndGameDialogOpen(true);
+  };
+
+  const closeEndGameDialog = () => {
+    setEndGameDialogOpen(false);
+  };
+
+  const handleGameTerminatedClose = () => {
+    setGameTerminatedDialog(false);
+    navigate('/');
   };
 
   const isPlayerWinner = (playerId: string): boolean => {
@@ -205,6 +258,30 @@ const GamePage: React.FC = () => {
             />
           </Box>
         ))}
+
+        {/* End Game Button */}
+        {game.state !== GameState.FINISHED && (
+          <Box sx={{ mt: 2, mb: 2 }}>
+            <Tooltip title="End this game for all players">
+              <Button
+                variant="outlined"
+                startIcon={<ExitToApp />}
+                onClick={openEndGameDialog}
+                fullWidth
+                sx={{
+                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                  color: 'white',
+                  '&:hover': {
+                    borderColor: '#ff4444',
+                    backgroundColor: 'rgba(255, 68, 68, 0.1)',
+                  }
+                }}
+              >
+                End Game
+              </Button>
+            </Tooltip>
+          </Box>
+        )}
 
         {/* Game Actions for current player */}
         <GameActions
@@ -369,6 +446,85 @@ const GamePage: React.FC = () => {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* End Game Confirmation Dialog */}
+      <Dialog
+        open={endGameDialogOpen}
+        onClose={closeEndGameDialog}
+        PaperProps={{
+          sx: {
+            background: 'rgba(0, 0, 0, 0.8)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            color: 'white'
+          }
+        }}
+      >
+        <DialogTitle sx={{ color: 'white' }}>
+          End Game
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+            Are you sure you want to end this game? This action cannot be undone and will disconnect all players.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={closeEndGameDialog} 
+            sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleEndGame}
+            disabled={isEndingGame}
+            sx={{ 
+              color: '#ff4444',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 68, 68, 0.1)'
+              }
+            }}
+          >
+            {isEndingGame ? 'Ending...' : 'End Game'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Game Terminated Dialog */}
+      <Dialog
+        open={gameTerminatedDialog}
+        onClose={handleGameTerminatedClose}
+        PaperProps={{
+          sx: {
+            background: 'rgba(0, 0, 0, 0.8)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            color: 'white'
+          }
+        }}
+      >
+        <DialogTitle sx={{ color: 'white' }}>
+          Game Ended
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+            This game has been ended by another player. You will be returned to the main page.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={handleGameTerminatedClose}
+            sx={{ 
+              color: '#FFD700',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 215, 0, 0.1)'
+              }
+            }}
+          >
+            Return to Home
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

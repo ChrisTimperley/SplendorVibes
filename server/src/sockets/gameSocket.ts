@@ -88,6 +88,10 @@ export class GameSocketHandler {
               log.info('Processing purchase-reserved-card action', { gameId, playerId: payload.playerId, cardId: payload.cardId });
               updatedGame = await this.gameService.purchaseReservedCard(gameId, payload.playerId, payload.cardId, payload.payment);
               break;
+            case 'end-game':
+              log.info('Processing end-game action', { gameId, playerId: payload.playerId });
+              updatedGame = await this.gameService.endGame(gameId, payload.playerId);
+              break;
             default:
               throw new Error('Unknown action');
           }

@@ -12,9 +12,14 @@ import {
   IconButton,
   Tooltip,
   Snackbar,
-  Alert
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText
 } from '@mui/material';
-import { ContentCopy, Share } from '@mui/icons-material';
+import { ContentCopy, Share, ExitToApp } from '@mui/icons-material';
 import { Game, GameState } from '../../../shared/types/game';
 import { gameService } from '../services/gameService';
 
@@ -24,6 +29,8 @@ const LobbyPage: React.FC = () => {
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [endGameDialogOpen, setEndGameDialogOpen] = useState(false);
+  const [isEndingGame, setIsEndingGame] = useState(false);
 
   useEffect(() => {
     if (!gameId) return;
@@ -76,6 +83,45 @@ const LobbyPage: React.FC = () => {
 
   const handleCopySnackbarClose = () => {
     setCopySuccess(false);
+  };
+
+  const handleEndGame = async () => {
+    if (!gameId) {
+      return;
+    }
+    
+    // Get current player ID from localStorage
+    let currentPlayerId = localStorage.getItem('currentPlayerId');
+    
+    // If no currentPlayerId in localStorage, use the first player as fallback
+    if (!currentPlayerId && game?.players && game.players.length > 0) {
+      currentPlayerId = game.players[0].id;
+    }
+    
+    if (!currentPlayerId) {
+      console.error('No current player ID found');
+      return;
+    }
+    
+    setIsEndingGame(true);
+    try {
+      await gameService.endGame(gameId, currentPlayerId);
+      navigate('/');
+    } catch (error) {
+      console.error('Error ending game:', error);
+      // TODO: Show error message to user
+    } finally {
+      setIsEndingGame(false);
+      setEndGameDialogOpen(false);
+    }
+  };
+
+  const openEndGameDialog = () => {
+    setEndGameDialogOpen(true);
+  };
+
+  const closeEndGameDialog = () => {
+    setEndGameDialogOpen(false);
   };
 
   if (loading) {
@@ -232,26 +278,87 @@ const LobbyPage: React.FC = () => {
               }
             </Typography>
 
-            {game.players.length >= 2 && game.state === GameState.WAITING_FOR_PLAYERS && (
+            <Box sx={{ display: 'flex', gap: 2 }}>
               <Button
-                variant="contained"
-                size="large"
-                onClick={() => navigate(`/game/${gameId}`)}
+                variant="outlined"
+                startIcon={<ExitToApp />}
+                onClick={openEndGameDialog}
                 sx={{
-                  background: 'linear-gradient(135deg, #DAA520 0%, #FFD700 100%)',
-                  color: '#000',
-                  fontWeight: 600,
+                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                  color: 'white',
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #B8860B 0%, #DAA520 100%)',
+                    borderColor: '#ff4444',
+                    backgroundColor: 'rgba(255, 68, 68, 0.1)',
                   }
                 }}
               >
-                Start Game
+                End Game
               </Button>
-            )}
+
+              {game.players.length >= 2 && game.state === GameState.WAITING_FOR_PLAYERS && (
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => navigate(`/game/${gameId}`)}
+                  sx={{
+                    background: 'linear-gradient(135deg, #DAA520 0%, #FFD700 100%)',
+                    color: '#000',
+                    fontWeight: 600,
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #B8860B 0%, #DAA520 100%)',
+                    }
+                  }}
+                >
+                  Start Game
+                </Button>
+              )}
+            </Box>
           </Box>
         </Paper>
       </Box>
+      
+      {/* End Game Confirmation Dialog */}
+      <Dialog
+        open={endGameDialogOpen}
+        onClose={closeEndGameDialog}
+        PaperProps={{
+          sx: {
+            background: 'rgba(0, 0, 0, 0.8)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            color: 'white'
+          }
+        }}
+      >
+        <DialogTitle sx={{ color: 'white' }}>
+          End Game
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+            Are you sure you want to end this game? This action cannot be undone and will disconnect all players.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={closeEndGameDialog} 
+            sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleEndGame}
+            disabled={isEndingGame}
+            sx={{ 
+              color: '#ff4444',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 68, 68, 0.1)'
+              }
+            }}
+          >
+            {isEndingGame ? 'Ending...' : 'End Game'}
+          </Button>
+        </DialogActions>
+      </Dialog>
       
       {/* Copy success snackbar */}
       <Snackbar

@@ -64,6 +64,13 @@ class GameService {
     });
     return response.data;
   }
+
+  async endGame(gameId: string, playerId: string): Promise<Game> {
+    const response = await axios.post(`${this.baseURL}/${gameId}/end`, {
+      playerId
+    });
+    return response.data;
+  }
 }
 
 export const gameService = new GameService();

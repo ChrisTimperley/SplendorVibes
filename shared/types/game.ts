@@ -71,6 +71,8 @@ export interface Game {
   winner?: Player;
   endTriggered?: boolean;
   endTriggerPlayerIndex?: number;
+  endReason?: 'victory' | 'terminated';
+  endedBy?: string; // Player ID who ended the game
   createdAt: Date;
   updatedAt: Date;
 }

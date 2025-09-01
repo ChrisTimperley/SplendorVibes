@@ -130,4 +130,31 @@ export class GameController {
       res.status(400).json({ error: (error as Error).message });
     }
   };
+
+  endGame = async (req: Request, res: Response) => {
+    try {
+      const { gameId } = req.params;
+      const { playerId } = req.body;
+      
+      console.log(`[${new Date().toISOString()}] CONTROLLER: Ending game`, {
+        gameId,
+        playerId
+      });
+
+      const game = await this.gameService.endGame(gameId, playerId);
+      
+      console.log(`[${new Date().toISOString()}] CONTROLLER: Game ended successfully`, {
+        gameId,
+        endedBy: playerId
+      });
+
+      res.json(game);
+    } catch (error) {
+      console.error(`[${new Date().toISOString()}] CONTROLLER: Error ending game`, {
+        gameId: req.params.gameId,
+        error: (error as Error).message
+      });
+      res.status(400).json({ error: (error as Error).message });
+    }
+  };
 }

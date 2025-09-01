@@ -18,6 +18,9 @@ export default function gameRoutes(gameService: GameService): Router {
   router.post('/:gameId/actions/purchase-card', gameController.purchaseCard);
   router.post('/:gameId/actions/reserve-card', gameController.reserveCard);
   router.post('/:gameId/actions/purchase-reserved-card', gameController.purchaseReservedCard);
+  
+  // End game route
+  router.post('/:gameId/end', gameController.endGame);
 
   return router;
 }

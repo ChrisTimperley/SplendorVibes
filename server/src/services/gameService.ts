@@ -165,4 +165,29 @@ export class GameService {
     this.games.set(gameId, updatedGame);
     return updatedGame;
   }
+
+  async endGame(gameId: string, playerId: string): Promise<Game> {
+    const game = this.games.get(gameId);
+    if (!game) {
+      throw new Error('Game not found');
+    }
+
+    // Verify the player is in the game
+    const player = game.players.find(p => p.id === playerId);
+    if (!player) {
+      throw new Error('Player not in game');
+    }
+
+    // Mark game as terminated
+    const updatedGame: Game = {
+      ...game,
+      state: GameState.FINISHED,
+      endReason: 'terminated',
+      endedBy: playerId,
+      updatedAt: new Date()
+    };
+
+    this.games.set(gameId, updatedGame);
+    return updatedGame;
+  }
 }
