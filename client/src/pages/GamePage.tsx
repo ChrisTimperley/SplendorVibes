@@ -60,11 +60,15 @@ const GamePage: React.FC = () => {
         socketService.onGameStateUpdate((updatedGame: Game) => {
           setGame(updatedGame);
           
-          // Check if game was terminated by another player
-          if (updatedGame.state === GameState.FINISHED && 
-              updatedGame.endReason === 'terminated' && 
-              updatedGame.endedBy !== currentPlayer) {
-            setGameTerminatedDialog(true);
+          // Check if game was terminated
+          if (updatedGame.state === GameState.FINISHED && updatedGame.endReason === 'terminated') {
+            if (updatedGame.endedBy !== currentPlayer) {
+              // Show dialog for players who didn't end the game
+              setGameTerminatedDialog(true);
+            } else {
+              // Navigate to home for the player who ended the game
+              navigate('/');
+            }
           }
         });
 
@@ -127,8 +131,9 @@ const GamePage: React.FC = () => {
     
     setIsEndingGame(true);
     try {
-      await gameService.endGame(gameId, currentPlayer);
-      navigate('/');
+      // Use socket system to ensure all players get notified
+      socketService.sendGameAction(gameId, 'end-game', { playerId: currentPlayer });
+      // Navigation will happen when socket update comes back
     } catch (error) {
       console.error('Error ending game:', error);
       // TODO: Show error message to user
