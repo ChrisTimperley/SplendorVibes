@@ -124,6 +124,7 @@ const GamePage: React.FC = () => {
 
   const handleCloseGameOverDialog = () => {
     setShowGameOverDialog(false);
+    navigate('/'); // Navigate to home page
   };
 
   const handleEndGame = async () => {
@@ -412,8 +413,8 @@ const GamePage: React.FC = () => {
                       <Typography
                         variant="body1"
                         sx={{
-                          fontWeight: 500,
-                          color: player.id === currentPlayer ? colors.secondary.light : colors.text.primary
+                          fontWeight: player.id === currentPlayer ? 700 : 500, // Make "You" bold for emphasis
+                          color: player.id === currentPlayer ? '#2C1810' : colors.text.primary // Use dark brown instead of gold
                         }}
                       >
                         {player.id === currentPlayer ? 'You' : player.name}
@@ -446,7 +447,7 @@ const GamePage: React.FC = () => {
                 py: 1.5
               }}
             >
-              Close
+              Leave Game
             </Button>
           </DialogContent>
         </Dialog>
