@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Box, Typography, Alert, Tooltip, Button } from '@mui/material';
+import { Box, Typography, Alert, Tooltip } from '@mui/material';
 import { TokenBank as TokenBankType, GemType } from '../../../shared/types/game';
 import { borderRadius, colors } from '../theme';
 import GemChip from './GemChip';
@@ -69,8 +69,6 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
     [onTokenSelectionChange, selectedTokens, tokens]
   );
 
-  const clearSelection = () => onTokenSelectionChange({});
-
   return (
     <Box
       sx={{
@@ -98,9 +96,6 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
         >
           Tokens
         </Typography>
-        <Button size="small" onClick={clearSelection} sx={{ color: '#eab308', textTransform: 'none', fontWeight: 700, fontSize: '0.75rem' }}>
-          Clear
-        </Button>
       </Box>
 
       {/* Token grid - Vertical layout */}
