@@ -8,8 +8,13 @@ import {
   ListItem,
   ListItemText,
   Button,
-  Chip
+  Chip,
+  IconButton,
+  Tooltip,
+  Snackbar,
+  Alert
 } from '@mui/material';
+import { ContentCopy, Share } from '@mui/icons-material';
 import { Game, GameState } from '../../../shared/types/game';
 import { gameService } from '../services/gameService';
 
@@ -18,6 +23,7 @@ const LobbyPage: React.FC = () => {
   const navigate = useNavigate();
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   useEffect(() => {
     if (!gameId) return;
@@ -47,6 +53,30 @@ const LobbyPage: React.FC = () => {
       navigate(`/game/${gameId}`);
     }
   }, [game, gameId, navigate]);
+
+  const copyInviteLink = async () => {
+    if (!gameId) return;
+    
+    const inviteLink = `${window.location.origin}/invite/${gameId}`;
+    
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      setCopySuccess(true);
+    } catch (err) {
+      // Fallback for browsers that don't support clipboard API
+      const textArea = document.createElement('textarea');
+      textArea.value = inviteLink;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopySuccess(true);
+    }
+  };
+
+  const handleCopySnackbarClose = () => {
+    setCopySuccess(false);
+  };
 
   if (loading) {
     return (
@@ -97,12 +127,14 @@ const LobbyPage: React.FC = () => {
           </Typography>
 
           <Box sx={{ mb: 3 }}>
-            <Typography 
-              variant="h6" 
-              gutterBottom
-              sx={{ color: 'white' }}
-            >
-              Game ID: <Chip 
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+              <Typography 
+                variant="h6" 
+                sx={{ color: 'white' }}
+              >
+                Game ID:
+              </Typography>
+              <Chip 
                 label={game.id} 
                 variant="outlined" 
                 sx={{
@@ -111,12 +143,43 @@ const LobbyPage: React.FC = () => {
                   backgroundColor: 'rgba(255, 255, 255, 0.1)'
                 }}
               />
-            </Typography>
+              <Tooltip title="Copy invite link">
+                <IconButton 
+                  onClick={copyInviteLink}
+                  sx={{ 
+                    color: 'white',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                    }
+                  }}
+                >
+                  <ContentCopy />
+                </IconButton>
+              </Tooltip>
+            </Box>
+            
+            <Button
+              variant="outlined"
+              startIcon={<Share />}
+              onClick={copyInviteLink}
+              sx={{
+                borderColor: 'rgba(255, 255, 255, 0.3)',
+                color: 'white',
+                mb: 2,
+                '&:hover': {
+                  borderColor: '#FFD700',
+                  backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                }
+              }}
+            >
+              Copy Invite Link
+            </Button>
+            
             <Typography 
               variant="body1" 
               sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
             >
-              Share this ID with other players to let them join
+              Share this link with other players to let them join instantly
             </Typography>
           </Box>
 
@@ -189,6 +252,22 @@ const LobbyPage: React.FC = () => {
           </Box>
         </Paper>
       </Box>
+      
+      {/* Copy success snackbar */}
+      <Snackbar
+        open={copySuccess}
+        autoHideDuration={3000}
+        onClose={handleCopySnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={handleCopySnackbarClose} 
+          severity="success" 
+          sx={{ width: '100%' }}
+        >
+          Invite link copied to clipboard!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

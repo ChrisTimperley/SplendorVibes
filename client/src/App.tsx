@@ -5,6 +5,7 @@ import { theme } from './theme';
 import HomePage from './pages/HomePage';
 import GamePage from './pages/GamePage';
 import LobbyPage from './pages/LobbyPage';
+import InvitePage from './pages/InvitePage';
 
 const App: React.FC = () => {
   return (
@@ -54,6 +55,7 @@ const App: React.FC = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/lobby/:gameId" element={<LobbyPage />} />
           <Route path="/game/:gameId" element={<GamePage />} />
+          <Route path="/invite/:gameId" element={<InvitePage />} />
         </Routes>
       </Container>
     </ThemeProvider>
