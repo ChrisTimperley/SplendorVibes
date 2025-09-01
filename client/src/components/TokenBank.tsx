@@ -197,28 +197,7 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
                 )}
               </Box>
 
-              {/* Label */}
-              <Typography
-                variant="body2"
-                sx={{
-                  mt: 1,
-                  fontWeight: 700,
-                  color: 'rgba(255,255,255,.75)',
-                  fontSize: '0.8rem',
-                  letterSpacing: '.06em',
-                  textTransform: 'capitalize',
-                }}
-              >
-                {gem}
-              </Typography>
 
-              {isGold && (
-                <Typography
-                  variant="caption"
-                  sx={{ mt: 0.5, fontSize: '0.7rem', color: 'rgba(255,255,255,.55)', fontStyle: 'italic' }}
-                >
-                </Typography>
-              )}
             </Box>
           );
         })}

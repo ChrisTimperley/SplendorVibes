@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { GemType } from '../../../shared/types/game';
 import { sizes, gemSystem, animations } from '../theme';
-import { getGemLetter, getGemContrastColor } from '../constants/gemColors';
+import { getGemContrastColor } from '../constants/gemColors';
 
 interface GemChipProps {
   gem: GemType;
@@ -118,27 +118,12 @@ const GemChip: React.FC<GemChipProps> = ({
       }}
       {...props}
     >
-      {/* Gem Letter/Symbol */}
-      <Typography
-        variant="body2"
-        sx={{
-          fontSize: size === 'sm' ? '0.6rem' : size === 'lg' ? '0.75rem' : '0.65rem',
-          fontWeight: 'bold',
-          color: contrastColor,
-          lineHeight: 1,
-          textShadow: '0 1px 1px rgba(0, 0, 0, 0.3)',
-          userSelect: 'none'
-        }}
-      >
-        {getGemLetter(gem)}
-      </Typography>
-
       {/* Count */}
       {count > 0 && (
         <Typography
           variant="body2"
           sx={{
-            fontSize: size === 'sm' ? '0.55rem' : size === 'lg' ? '0.65rem' : '0.6rem',
+            fontSize: size === 'sm' ? '0.65rem' : size === 'lg' ? '0.85rem' : '0.75rem',
             fontWeight: 'bold',
             color: contrastColor,
             lineHeight: 1,
