@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Typography, Box } from '@mui/material';
-import { GameBoard as GameBoardType, Card } from '../../../shared/types/game';
+import { Typography, Box, Button, Tooltip } from '@mui/material';
+import { ExitToApp } from '@mui/icons-material';
+import { GameBoard as GameBoardType, Card, GameState } from '../../../shared/types/game';
 import { borderRadius, colors } from '../theme';
 import GameCard from './GameCard';
 import NobleComponent from './NobleComponent';
 import TokenBank from './TokenBank';
+import GameActions from './GameActions';
 import CardActionDialog from './CardActionDialog';
 
 interface GameBoardProps {
@@ -12,13 +14,20 @@ interface GameBoardProps {
   onCardAction: (action: string, payload: any) => void;
   selectedTokens: any;
   onTokenSelectionChange: (tokens: any) => void;
+  // New props for Action Dock
+  gameState: GameState;
+  isCurrentPlayerTurn: boolean;
+  onEndGame: () => void;
 }
 
 const GameBoard: React.FC<GameBoardProps> = ({
   board,
   onCardAction,
   selectedTokens,
-  onTokenSelectionChange
+  onTokenSelectionChange,
+  gameState,
+  isCurrentPlayerTurn,
+  onEndGame
 }) => {
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [cardDialogOpen, setCardDialogOpen] = useState(false);
@@ -205,19 +214,56 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1.5 }}>
-      {/* Token Bank Section - Left Side */}
+      {/* Action Dock - Left Side */}
       <Box sx={{ 
-        width: '140px', 
+        width: '180px', 
         flexShrink: 0,
         position: 'sticky',
         top: 0,
-        alignSelf: 'flex-start'
+        alignSelf: 'flex-start',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1
       }}>
+        {/* Token Bank */}
         <TokenBank
           tokens={board.tokens}
           selectedTokens={selectedTokens}
           onTokenSelectionChange={onTokenSelectionChange}
         />
+        
+        {/* Game Actions */}
+        <GameActions
+          selectedTokens={selectedTokens}
+          onAction={onCardAction}
+          isCurrentPlayerTurn={isCurrentPlayerTurn}
+        />
+        
+        {/* End Game Button */}
+        {gameState !== GameState.FINISHED && (
+          <Box>
+            <Tooltip title="End this game for all players">
+              <Button
+                variant="outlined"
+                startIcon={<ExitToApp />}
+                onClick={onEndGame}
+                fullWidth
+                size="small"
+                sx={{
+                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                  color: 'white',
+                  fontSize: '0.7rem',
+                  '&:hover': {
+                    borderColor: '#ff4444',
+                    backgroundColor: 'rgba(255, 68, 68, 0.1)',
+                  }
+                }}
+              >
+                End Game
+              </Button>
+            </Tooltip>
+          </Box>
+        )}
       </Box>
 
       {/* Main Game Content - Right Side */}

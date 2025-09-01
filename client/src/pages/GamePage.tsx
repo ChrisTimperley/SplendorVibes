@@ -10,16 +10,13 @@ import {
   DialogContentText,
   Button, 
   Paper,
-  IconButton,
-  Tooltip
+  IconButton
 } from '@mui/material';
-import { ExitToApp } from '@mui/icons-material';
 import { Game, GameState } from '../../../shared/types/game';
 import { gameService } from '../services/gameService';
 import { socketService } from '../services/socketService';
 import GameBoard from '../components/GameBoard';
 import PlayerArea from '../components/PlayerArea';
-import GameActions from '../components/GameActions';
 import { colors, borderRadius } from '../theme';
 
 const GamePage: React.FC = () => {
@@ -208,6 +205,11 @@ const GamePage: React.FC = () => {
           onCardAction={game.state === GameState.FINISHED ? () => {} : handleGameAction}
           selectedTokens={selectedTokens}
           onTokenSelectionChange={game.state === GameState.FINISHED ? () => {} : setSelectedTokens}
+          gameState={game.state}
+          isCurrentPlayerTurn={
+            Boolean(currentPlayer && game.players[game.currentPlayerIndex]?.id === currentPlayer && game.state !== GameState.FINISHED)
+          }
+          onEndGame={openEndGameDialog}
         />
       </Box>
 
@@ -264,39 +266,6 @@ const GamePage: React.FC = () => {
             />
           </Box>
         ))}
-
-        {/* End Game Button */}
-        {game.state !== GameState.FINISHED && (
-          <Box sx={{ mt: 2, mb: 2 }}>
-            <Tooltip title="End this game for all players">
-              <Button
-                variant="outlined"
-                startIcon={<ExitToApp />}
-                onClick={openEndGameDialog}
-                fullWidth
-                sx={{
-                  borderColor: 'rgba(255, 255, 255, 0.3)',
-                  color: 'white',
-                  '&:hover': {
-                    borderColor: '#ff4444',
-                    backgroundColor: 'rgba(255, 68, 68, 0.1)',
-                  }
-                }}
-              >
-                End Game
-              </Button>
-            </Tooltip>
-          </Box>
-        )}
-
-        {/* Game Actions for current player */}
-        <GameActions
-          selectedTokens={selectedTokens}
-          onAction={handleGameAction}
-          isCurrentPlayerTurn={
-            Boolean(currentPlayer && game.players[game.currentPlayerIndex]?.id === currentPlayer && game.state !== GameState.FINISHED)
-          }
-        />
       </Box>
 
       {/* Game Over Dialog */}
