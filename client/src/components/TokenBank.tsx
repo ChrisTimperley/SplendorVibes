@@ -96,7 +96,7 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
             fontSize: '1.4rem', // Reduced from 1.6rem
           }}
         >
-          Token Bank
+          Available Tokens
         </Typography>
         <Button size="small" onClick={clearSelection} sx={{ color: '#eab308', textTransform: 'none', fontWeight: 700 }}>
           Clear
