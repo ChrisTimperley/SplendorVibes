@@ -236,21 +236,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
       {/* Development Cards Section */}
       <Box>
-        <Typography
-          variant="h2"
-          sx={{
-            mb: 2.5, // Reduced from 4
-            fontFamily: '"Cinzel", serif',
-            fontWeight: 700,
-            color: '#ffffff',
-            textAlign: 'center',
-            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-            fontSize: '2rem' // Reduced from 2.2rem
-          }}
-        >
-          Development Cards
-        </Typography>
-
         {[3, 2, 1].map((tier) => (
           <Box key={tier} sx={{ mb: 2.5 }}> {/* Reduced from 4 */}
             <Box sx={{
