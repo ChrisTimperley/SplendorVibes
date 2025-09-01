@@ -204,19 +204,19 @@ const GameBoard: React.FC<GameBoardProps> = ({
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}> {/* Reduced from 4 */}
       {/* Nobles Section */}
       <Box>
         <Typography
           variant="h2"
           sx={{
-            mb: 3,
+            mb: 2, // Reduced from 3
             fontFamily: '"Cinzel", serif',
             fontWeight: 700,
             color: '#ffffff',
             textAlign: 'center',
             textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-            fontSize: '2.2rem'
+            fontSize: '2rem' // Reduced from 2.2rem
           }}
         >
           Nobles
@@ -224,9 +224,9 @@ const GameBoard: React.FC<GameBoardProps> = ({
         <Box sx={{
           display: 'grid',
           gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize.width}px, 1fr))`,
-          gap: 2,
+          gap: 1.5, // Reduced from 2
           justifyItems: 'center',
-          px: 2
+          px: 1.5 // Reduced from 2
         }}>
           {board.nobles.map((noble) => (
             <NobleComponent key={noble.id} noble={noble} />
@@ -239,26 +239,26 @@ const GameBoard: React.FC<GameBoardProps> = ({
         <Typography
           variant="h2"
           sx={{
-            mb: 4,
+            mb: 2.5, // Reduced from 4
             fontFamily: '"Cinzel", serif',
             fontWeight: 700,
             color: '#ffffff',
             textAlign: 'center',
             textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-            fontSize: '2.2rem'
+            fontSize: '2rem' // Reduced from 2.2rem
           }}
         >
           Development Cards
         </Typography>
 
         {[3, 2, 1].map((tier) => (
-          <Box key={tier} sx={{ mb: 4 }}>
+          <Box key={tier} sx={{ mb: 2.5 }}> {/* Reduced from 4 */}
             <Box sx={{
               display: 'grid',
               gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize.width}px, 1fr))`,
-              gap: 2,
+              gap: 1.5, // Reduced from 2
               justifyItems: 'center',
-              px: 2
+              px: 1.5 // Reduced from 2
             }}>
               {board.availableCards[`tier${tier}` as keyof typeof board.availableCards].map((card) => (
                 <GameCard

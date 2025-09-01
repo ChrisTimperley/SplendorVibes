@@ -133,9 +133,9 @@ const GamePage: React.FC = () => {
         minHeight: '100vh',
         background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
         display: 'grid',
-        gridTemplateColumns: '1fr 320px',
-        gap: 3,
-        p: 2,
+        gridTemplateColumns: '1fr 280px', // Reduced from 320px
+        gap: 2, // Reduced from 3
+        p: 1.5, // Reduced from 2
         '@media (max-width: 1200px)': {
           gridTemplateColumns: '1fr',
           gap: 2,
@@ -156,12 +156,13 @@ const GamePage: React.FC = () => {
       <Box
         sx={{
           position: 'sticky',
-          top: 16,
+          top: 12, // Reduced from 16
           height: 'fit-content',
-          background: 'rgba(0, 0, 0, 0.3)',
+          background: 'rgba(0, 0, 0, 0.6)', // Increased opacity for better contrast
           borderRadius: 2,
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          p: 2,
+          border: '1px solid rgba(255, 255, 255, 0.2)', // Increased border opacity
+          p: 1.5, // Reduced from 2
+          backdropFilter: 'blur(8px)', // Added blur for better visual separation
           '@media (max-width: 1200px)': {
             position: 'static',
             order: -1,
@@ -173,8 +174,8 @@ const GamePage: React.FC = () => {
           sx={{
             fontWeight: 600,
             color: 'white',
-            mb: 2,
-            fontSize: '1.1rem',
+            mb: 1.5, // Reduced from 2
+            fontSize: '1rem', // Reduced from 1.1rem
             textAlign: 'center',
           }}
         >
@@ -183,14 +184,14 @@ const GamePage: React.FC = () => {
 
         {/* All Players */}
         {game.players.map((player, index) => (
-          <Box key={player.id} sx={{ mb: 2 }}>
+          <Box key={player.id} sx={{ mb: 1.5 }}> {/* Reduced from 2 */}
             <Typography
               variant="subtitle1"
               sx={{
                 fontWeight: 600,
                 color: player.id === currentPlayer ? 'gold' : 'white',
-                mb: 1,
-                fontSize: '0.95rem'
+                mb: 0.75, // Reduced from 1
+                fontSize: '0.9rem', // Reduced from 0.95rem
               }}
             >
               {player.id === currentPlayer ? 'You: ' : ''}{player.name}

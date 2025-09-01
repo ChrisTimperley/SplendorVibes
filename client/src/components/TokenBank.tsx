@@ -72,9 +72,17 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
   const clearSelection = () => onTokenSelectionChange({});
 
   return (
-    <Box>
+    <Box
+      sx={{
+        background: 'rgba(0, 0, 0, 0.4)', // Added semi-transparent background
+        borderRadius: 2,
+        border: '1px solid rgba(255, 255, 255, 0.15)',
+        p: 2,
+        backdropFilter: 'blur(4px)', // Added blur for better visual separation
+      }}
+    >
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 1.5 }}> {/* Reduced mb from 2 */}
         <Typography
           component="h2"
           variant="h4"
@@ -84,8 +92,8 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
             color: '#fff',
             textAlign: 'center',
             letterSpacing: '.08em',
-            textShadow: 'none',
-            fontSize: '1.6rem',
+            textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)', // Added text shadow for better contrast
+            fontSize: '1.4rem', // Reduced from 1.6rem
           }}
         >
           Token Bank
@@ -100,8 +108,8 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
         sx={{
           display: 'grid',
           gridTemplateColumns: { xs: 'repeat(3, 1fr)', md: 'repeat(6, 1fr)' },
-          gap: { xs: 3, md: 4 },
-          mb: 3,
+          gap: { xs: 2, md: 2.5 }, // Reduced from 3 and 4
+          mb: 2, // Reduced from 3
           alignItems: 'start',
           justifyItems: 'center',
         }}

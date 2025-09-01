@@ -75,11 +75,11 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, onPurc
         variant="h5"
         sx={{
           color: colors.secondary.light,
-          mb: 2,
+          mb: 1.5, // Reduced from 2
           fontWeight: 600,
           transform: prestigeChanged ? 'scale(1.1)' : 'scale(1)',
           transition: animations.popup,
-          fontSize: '1.2rem',
+          fontSize: '1.1rem', // Reduced from 1.2rem
         }}
       >
         {player.prestige} Prestige Points
@@ -87,14 +87,14 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({ player, isCurrentPlayer, onPurc
 
       {/* Buying Power */}
       <Typography variant="h6" sx={{
-        mb: 1,
+        mb: 0.75, // Reduced from 1
         color: 'white',
         fontWeight: 500,
-        fontSize: '0.9rem',
+        fontSize: '0.85rem', // Reduced from 0.9rem
       }}>
         Buying Power:
       </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: 2 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: 1.5 }}> {/* Reduced from 2 */}
         {(['diamond', 'sapphire', 'emerald', 'ruby', 'onyx', 'gold'] as GemType[]).map((gem) => {
           const tokens = player.tokens[gem] || 0;
           const bonuses = player.cards.filter(card => card.gemBonus === gem).length;

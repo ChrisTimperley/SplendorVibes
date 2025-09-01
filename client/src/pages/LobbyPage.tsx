@@ -65,59 +65,130 @@ const LobbyPage: React.FC = () => {
   }
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Game Lobby
-        </Typography>
-
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Game ID: <Chip label={game.id} variant="outlined" />
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Share this ID with other players to let them join
-          </Typography>
-        </Box>
-
-        <Typography variant="h6" gutterBottom>
-          Players ({game.players.length}/4)
-        </Typography>
-
-        <Paper variant="outlined" sx={{ mb: 3 }}>
-          <List>
-            {game.players.map((player, index) => (
-              <ListItem key={player.id}>
-                <ListItemText
-                  primary={player.name}
-                  secondary={index === 0 ? 'Host' : 'Player'}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </Paper>
-
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="body1" color="text.secondary">
-            {game.players.length < 2
-              ? 'Waiting for at least 2 players to start...'
-              : game.state === GameState.WAITING_FOR_PLAYERS
-                ? 'Ready to start!'
-                : 'Game in progress...'
-            }
+    <Box 
+      sx={{ 
+        minHeight: '100vh',
+        background: 'transparent', // Use the body background
+        py: 4,
+        px: 2
+      }}
+    >
+      <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
+        <Paper 
+          elevation={3} 
+          sx={{ 
+            p: 4,
+            background: 'rgba(0, 0, 0, 0.4)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: 2
+          }}
+        >
+          <Typography 
+            variant="h4" 
+            gutterBottom
+            sx={{
+              color: 'white',
+              fontFamily: '"Cinzel", serif',
+              textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)'
+            }}
+          >
+            Game Lobby
           </Typography>
 
-          {game.players.length >= 2 && game.state === GameState.WAITING_FOR_PLAYERS && (
-            <Button
-              variant="contained"
-              size="large"
-              onClick={() => navigate(`/game/${gameId}`)}
+          <Box sx={{ mb: 3 }}>
+            <Typography 
+              variant="h6" 
+              gutterBottom
+              sx={{ color: 'white' }}
             >
-              Start Game
-            </Button>
-          )}
-        </Box>
-      </Paper>
+              Game ID: <Chip 
+                label={game.id} 
+                variant="outlined" 
+                sx={{
+                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                  color: 'white',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                }}
+              />
+            </Typography>
+            <Typography 
+              variant="body1" 
+              sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
+            >
+              Share this ID with other players to let them join
+            </Typography>
+          </Box>
+
+          <Typography 
+            variant="h6" 
+            gutterBottom
+            sx={{ color: 'white' }}
+          >
+            Players ({game.players.length}/4)
+          </Typography>
+
+          <Paper 
+            variant="outlined" 
+            sx={{ 
+              mb: 3,
+              background: 'rgba(0, 0, 0, 0.2)',
+              borderColor: 'rgba(255, 255, 255, 0.1)'
+            }}
+          >
+            <List>
+              {game.players.map((player, index) => (
+                <ListItem key={player.id}>
+                  <ListItemText
+                    primary={player.name}
+                    secondary={index === 0 ? 'Host' : 'Player'}
+                    sx={{
+                      '& .MuiListItemText-primary': {
+                        color: 'white'
+                      },
+                      '& .MuiListItemText-secondary': {
+                        color: 'rgba(255, 255, 255, 0.6)'
+                      }
+                    }}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography 
+              variant="body1" 
+              sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
+            >
+              {game.players.length < 2
+                ? 'Waiting for at least 2 players to start...'
+                : game.state === GameState.WAITING_FOR_PLAYERS
+                  ? 'Ready to start!'
+                  : 'Game in progress...'
+              }
+            </Typography>
+
+            {game.players.length >= 2 && game.state === GameState.WAITING_FOR_PLAYERS && (
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() => navigate(`/game/${gameId}`)}
+                sx={{
+                  background: 'linear-gradient(135deg, #DAA520 0%, #FFD700 100%)',
+                  color: '#000',
+                  fontWeight: 600,
+                  '&:hover': {
+                    background: 'linear-gradient(135deg, #B8860B 0%, #DAA520 100%)',
+                  }
+                }}
+              >
+                Start Game
+              </Button>
+            )}
+          </Box>
+        </Paper>
+      </Box>
     </Box>
   );
 };
