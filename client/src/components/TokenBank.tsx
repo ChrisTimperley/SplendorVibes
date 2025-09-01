@@ -82,36 +82,35 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
       }}
     >
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 1.5 }}> {/* Reduced mb from 2 */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, mb: 2 }}>
         <Typography
           component="h2"
-          variant="h4"
+          variant="h5"
           sx={{
             fontFamily: '"Cinzel", serif',
             fontWeight: 700,
             color: '#fff',
             textAlign: 'center',
             letterSpacing: '.08em',
-            textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)', // Added text shadow for better contrast
-            fontSize: '1.4rem', // Reduced from 1.6rem
+            textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
+            fontSize: '1.1rem',
           }}
         >
-          Available Tokens
+          Tokens
         </Typography>
-        <Button size="small" onClick={clearSelection} sx={{ color: '#eab308', textTransform: 'none', fontWeight: 700 }}>
+        <Button size="small" onClick={clearSelection} sx={{ color: '#eab308', textTransform: 'none', fontWeight: 700, fontSize: '0.75rem' }}>
           Clear
         </Button>
       </Box>
 
-      {/* Token grid */}
+      {/* Token grid - Vertical layout */}
       <Box
         sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: 'repeat(3, 1fr)', md: 'repeat(6, 1fr)' },
-          gap: { xs: 2, md: 2.5 }, // Reduced from 3 and 4
-          mb: 2, // Reduced from 3
-          alignItems: 'start',
-          justifyItems: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1.5,
+          mb: 2,
+          alignItems: 'center',
         }}
       >
         {GEM_ORDER.map((gem) => {
@@ -239,12 +238,12 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
         </Alert>
       )}
 
-      {/* Selection summary as chips */}
+      {/* Selection summary as chips - Vertical layout */}
       {Object.keys(selectedTokens).length > 0 && !errorMessage && (
         <Box
           sx={{
             mt: 2,
-            p: 1.5,
+            p: 1,
             bgcolor: colors.background.parchment,
             borderRadius: `${borderRadius.lg}px`,
             border: `1px solid ${colors.secondary.light}`,
@@ -252,12 +251,12 @@ const TokenBank: React.FC<TokenBankProps> = ({ tokens, selectedTokens, onTokenSe
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 1.25,
+            gap: 0.75,
             flexWrap: 'wrap',
           }}
         >
           {GEM_ORDER.filter((g) => (selectedTokens[g] ?? 0) > 0).map((g) => (
-            <GemChip key={g} gem={g as GemType} count={selectedTokens[g]!} size="md" interactive={false} />
+            <GemChip key={g} gem={g as GemType} count={selectedTokens[g]!} size="sm" interactive={false} />
           ))}
         </Box>
       )}

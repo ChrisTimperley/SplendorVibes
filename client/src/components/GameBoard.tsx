@@ -204,70 +204,79 @@ const GameBoard: React.FC<GameBoardProps> = ({
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}> {/* Further reduced for smaller cards */}
-      {/* Nobles Section */}
-      <Box>
-        <Typography
-          variant="h2"
-          sx={{
-            mb: 2, // Reduced from 3
-            fontFamily: '"Cinzel", serif',
-            fontWeight: 700,
-            color: '#ffffff',
-            textAlign: 'center',
-            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-            fontSize: '2rem' // Reduced from 2.2rem
-          }}
-        >
-          Nobles
-        </Typography>
-        <Box sx={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize.width}px, 1fr))`,
-          gap: 1.2, // Further reduced for smaller cards
-          justifyItems: 'center',
-          px: 1.2 // Further reduced for smaller cards
-        }}>
-          {board.nobles.map((noble) => (
-            <NobleComponent key={noble.id} noble={noble} />
-          ))}
-        </Box>
-      </Box>
-
-      {/* Development Cards Section */}
-      <Box>
-        {[3, 2, 1].map((tier) => (
-          <Box key={tier} sx={{ mb: 2 }}>
-            <Box sx={{
-              display: 'grid',
-              gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize.width}px, 1fr))`,
-              gap: 1.2,
-              justifyItems: 'center',
-              px: 1.2
-            }}>
-              {board.availableCards[`tier${tier}` as keyof typeof board.availableCards].map((card) => (
-                <GameCard
-                  key={card.id}
-                  card={card}
-                  onCardSelect={handleCardSelect}
-                />
-              ))}
-              <DeckPlaceholder
-                count={board.cardDecks[`tier${tier}` as keyof typeof board.cardDecks].length}
-                tier={tier}
-              />
-            </Box>
-          </Box>
-        ))}
-      </Box>
-
-      {/* Token Bank Section */}
-      <Box>
+    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+      {/* Token Bank Section - Left Side */}
+      <Box sx={{ 
+        width: '200px', 
+        flexShrink: 0,
+        position: 'sticky',
+        top: 0,
+        alignSelf: 'flex-start'
+      }}>
         <TokenBank
           tokens={board.tokens}
           selectedTokens={selectedTokens}
           onTokenSelectionChange={onTokenSelectionChange}
         />
+      </Box>
+
+      {/* Main Game Content - Right Side */}
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        {/* Nobles Section */}
+        <Box>
+          <Typography
+            variant="h2"
+            sx={{
+              mb: 2, // Reduced from 3
+              fontFamily: '"Cinzel", serif',
+              fontWeight: 700,
+              color: '#ffffff',
+              textAlign: 'center',
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+              fontSize: '2rem' // Reduced from 2.2rem
+            }}
+          >
+            Nobles
+          </Typography>
+          <Box sx={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize.width}px, 1fr))`,
+            gap: 1.2, // Further reduced for smaller cards
+            justifyItems: 'center',
+            px: 1.2 // Further reduced for smaller cards
+          }}>
+            {board.nobles.map((noble) => (
+              <NobleComponent key={noble.id} noble={noble} />
+            ))}
+          </Box>
+        </Box>
+
+        {/* Development Cards Section */}
+        <Box>
+          {[3, 2, 1].map((tier) => (
+            <Box key={tier} sx={{ mb: 2 }}>
+              <Box sx={{
+                display: 'grid',
+                gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize.width}px, 1fr))`,
+                gap: 1.2,
+                justifyItems: 'center',
+                px: 1.2
+              }}>
+                {board.availableCards[`tier${tier}` as keyof typeof board.availableCards].map((card) => (
+                  <GameCard
+                    key={card.id}
+                    card={card}
+                    onCardSelect={handleCardSelect}
+                  />
+                ))}
+                <DeckPlaceholder
+                  count={board.cardDecks[`tier${tier}` as keyof typeof board.cardDecks].length}
+                  tier={tier}
+                />
+              </Box>
+            </Box>
+          ))}
+        </Box>
       </Box>
 
       {/* Card Action Dialog */}
