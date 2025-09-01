@@ -23,8 +23,8 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [cardDialogOpen, setCardDialogOpen] = useState(false);
 
-  // Use DevCard dimensions (220x300)
-  const cardSize = { width: 220, height: 300 };
+  // Use DevCard dimensions (160x220)
+  const cardSize = { width: 160, height: 220 };
 
   const handleCardSelect = (card: Card) => {
     setSelectedCard(card);
@@ -204,7 +204,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}> {/* Reduced from 4 */}
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}> {/* Further reduced for smaller cards */}
       {/* Nobles Section */}
       <Box>
         <Typography
@@ -224,9 +224,9 @@ const GameBoard: React.FC<GameBoardProps> = ({
         <Box sx={{
           display: 'grid',
           gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize.width}px, 1fr))`,
-          gap: 1.5, // Reduced from 2
+          gap: 1.2, // Further reduced for smaller cards
           justifyItems: 'center',
-          px: 1.5 // Reduced from 2
+          px: 1.2 // Further reduced for smaller cards
         }}>
           {board.nobles.map((noble) => (
             <NobleComponent key={noble.id} noble={noble} />
@@ -237,13 +237,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
       {/* Development Cards Section */}
       <Box>
         {[3, 2, 1].map((tier) => (
-          <Box key={tier} sx={{ mb: 2.5 }}> {/* Reduced from 4 */}
+          <Box key={tier} sx={{ mb: 2 }}>
             <Box sx={{
               display: 'grid',
               gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize.width}px, 1fr))`,
-              gap: 1.5, // Reduced from 2
+              gap: 1.2,
               justifyItems: 'center',
-              px: 1.5 // Reduced from 2
+              px: 1.2
             }}>
               {board.availableCards[`tier${tier}` as keyof typeof board.availableCards].map((card) => (
                 <GameCard
@@ -252,8 +252,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
                   onCardSelect={handleCardSelect}
                 />
               ))}
-
-              {/* Tier-styled deck placeholder */}
               <DeckPlaceholder
                 count={board.cardDecks[`tier${tier}` as keyof typeof board.cardDecks].length}
                 tier={tier}

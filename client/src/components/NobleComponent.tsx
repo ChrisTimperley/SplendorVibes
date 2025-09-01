@@ -14,15 +14,15 @@ const SquareCostPip: React.FC<{ gem: GemType; count: number }> = ({ gem, count }
   return (
     <Box
       sx={{
-        width: 28,
-        height: 28,
+        width: 24,
+        height: 24,
         backgroundColor: gemColor,
         border: '1px solid rgba(0,0,0,0.2)',
-        borderRadius: '6px',
+        borderRadius: '5px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: '0.85rem',
+        fontSize: '0.8rem',
         fontWeight: 'bold',
         color: gem === 'diamond' ? '#333' :
                gem === 'gold' ? '#000' :
@@ -62,18 +62,18 @@ const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
       elevation={6}
       sx={{
         position: 'relative',
-        width: 220, // Match development card width
-        height: 180, // Shorter than dev cards
+        width: 160, // Match development card width
+        height: 130, // Proportionally smaller than dev cards
         borderRadius: 2,
         overflow: 'hidden',
         background: '#fff',
         border: '2px solid #cbd5e1',
-        boxShadow: '0 10px 25px rgba(0,0,0,.15), 0 4px 10px rgba(0,0,0,.1)',
+        boxShadow: '0 8px 20px rgba(0,0,0,.15), 0 3px 8px rgba(0,0,0,.1)',
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         cursor: 'pointer',
         '&:hover': {
-          transform: 'translateY(-6px) scale(1.02)',
-          boxShadow: '0 20px 40px rgba(0,0,0,.2), 0 8px 16px rgba(0,0,0,.15)',
+          transform: 'translateY(-4px) scale(1.02)',
+          boxShadow: '0 15px 30px rgba(0,0,0,.2), 0 6px 12px rgba(0,0,0,.15)',
           borderColor: '#94a3b8'
         },
         '&:before': { // laminated inner border
@@ -168,11 +168,11 @@ const NobleComponent: React.FC<NobleComponentProps> = ({ noble }) => {
           sx={{
             fontFamily: 'Cinzel, serif',
             fontWeight: 900,
-            fontSize: 42, // Larger to match dev cards better
+            fontSize: 32, // Proportionally smaller for reduced card size
             color: '#ffffffff',
             textShadow: '0 1px 2px rgba(0, 0, 0, 0.8)',
             lineHeight: 1,
-            mb: 2
+            mb: 1.5
           }}
         >
           {noble.prestige}
