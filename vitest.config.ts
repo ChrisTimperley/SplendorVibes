@@ -5,6 +5,13 @@ export default defineConfig({
     environment: 'node',
     globals: true,
     include: ['shared/**/*.test.ts', 'shared/**/*.spec.ts'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      reportsDirectory: './coverage',
+      include: ['shared/**/*.ts'],
+      exclude: ['shared/**/*.test.ts', 'shared/**/*.spec.ts'],
+    },
   },
   resolve: {
     alias: {

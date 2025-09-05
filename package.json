@@ -16,6 +16,8 @@
     "client:test": "cd client && npm test",
     "shared:test": "vitest run",
     "shared:test:watch": "vitest",
+    "shared:test:coverage": "vitest run --coverage",
+    "shared:test:coverage:watch": "vitest --coverage",
     "install:all": "npm install && cd server && npm install && cd ../client && npm install",
     "kill": "pkill -f 'node.*vite|nodemon|ts-node' || sudo lsof -ti:3000,3001,3002 | xargs -r sudo kill -9 || true",
     "docs": "./open-docs.sh",
@@ -31,6 +33,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "concurrently": "^8.2.2",
     "typescript": "^5.9.2",
