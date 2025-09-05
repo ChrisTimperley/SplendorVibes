@@ -11,19 +11,29 @@
     "client:build": "cd client && npm run build",
     "server:build": "cd server && npm run build",
     "start": "cd server && npm start",
-    "test": "npm run server:test && npm run client:test",
+    "test": "npm run server:test && npm run client:test && npm run shared:test",
     "server:test": "cd server && npm test",
     "client:test": "cd client && npm test",
+    "shared:test": "vitest run",
+    "shared:test:watch": "vitest",
     "install:all": "npm install && cd server && npm install && cd ../client && npm install",
     "kill": "pkill -f 'node.*vite|nodemon|ts-node' || sudo lsof -ti:3000,3001,3002 | xargs -r sudo kill -9 || true",
     "docs": "./open-docs.sh",
     "docs:build": "echo 'API docs are generated from OpenAPI spec'",
     "docs:serve": "echo 'Docs served at http://localhost:3001/docs/index.html when server is running'"
   },
-  "keywords": ["board-game", "splendor", "web-game", "multiplayer"],
+  "keywords": [
+    "board-game",
+    "splendor",
+    "web-game",
+    "multiplayer"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@vitest/ui": "^3.2.4",
+    "concurrently": "^8.2.2",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   }
 }
